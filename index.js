@@ -152,7 +152,7 @@ const checkAnswer = (selected, button) => {
 
         setTimeout(() => {
             nextQuestion()
-        }, 1500)
+        }, 1000)
     } else {
         resultLabel.innerText = randomMessage(messages.incorrect)
         scoreUpdate(-1)
