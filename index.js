@@ -22,11 +22,13 @@ const allHiraganaMap = {
     },
 }
 
+// settings
+const hiraganaRange = ['a', 'ka', 'sa']
+const duplicate_level = 3 // 1 ~ 5
+
 const resultLabel = document.getElementById('result')
 const questionLabel = document.getElementById('question')
 const skipButton = document.getElementById('skipButton')
-
-const hiraganaRange = ['a', 'ka', 'sa']
 
 const hiraganaMap = Object.keys(allHiraganaMap)
     .filter((key) => hiraganaRange.includes(key))
@@ -36,7 +38,7 @@ const hiraganaMap = Object.keys(allHiraganaMap)
     }, {})
 
 let correctAnswer = ''
-let previousAnswers = [] // 5 questions
+let previousAnswers = []
 
 let score = 0
 const scoreLabel = document.getElementById('score')
@@ -84,7 +86,7 @@ const nextQuestion = () => {
 
     previousAnswers.push(randomHiragana)
 
-    if (previousAnswers.length > 3 * hiraganaRange.length) previousAnswers.shift()
+    if (previousAnswers.length > duplicate_level * hiraganaRange.length) previousAnswers.shift()
 
     correctAnswer = randomHiragana
     generateOptions()
