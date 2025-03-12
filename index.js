@@ -1,3 +1,15 @@
+const urlParams = new URLSearchParams(window.location.search)
+const range = urlParams.get('r')
+const duplicate = urlParams.get('d')
+
+
+// settings
+// const hiraganaRange = ['a', 'ka', 'sa']
+const hiraganaRange = range ? range.split(',').map((r) => r.trim()) : ['a', 'ka', 'sa']
+const duplicate_level = duplicate ? parseInt(duplicate) : 3
+
+console.log(`hiraganaRange: ${hiraganaRange.join(' | ')}, duplicate_level: ${duplicate_level}`)
+
 const allHiraganaMap = {
     a: {
         a: { hiragana: 'あ', korean: '아', english: 'a', hint: '' },
@@ -22,9 +34,10 @@ const allHiraganaMap = {
     },
 }
 
-// settings
-const hiraganaRange = ['a', 'ka', 'sa']
-const duplicate_level = 3 // 1 ~ 5
+const messages = {
+    correct: ['참 잘했어요~', '오빠 개멋있어', '이야.. 수준이 장난아니시네요!!!', '이정도면 얼 유 니혼진?', '일본 가서 뭐할려고 이렇게 잘하니?'],
+    incorrect: ['엄마는 우리 아들 믿어~!', '넌 할 수 있어~!', '우리 아들 화이팅~!', '아깝다..', '이런..', '다음엔 꼭 맞춰보세요~'],
+}
 
 const resultLabel = document.getElementById('result')
 const questionLabel = document.getElementById('question')
@@ -48,6 +61,8 @@ const scoreUpdate = (n) => {
     score += n
     scoreLabel.innerText = score
 }
+
+const randomMessage = (messages) => messages[Math.floor(Math.random() * messages.length)]
 
 const toggleButtons = (state) => document.querySelectorAll('button').forEach((button) => (button.disabled = state))
 
@@ -96,14 +111,14 @@ const generateOptions = () => {
     let options = [correctAnswer.english]
     while (options.length < 5) {
         let randomHiragana = getRandomHiragana()
-        if (!options.includes(randomHiragana.english)) {
-            options.push(randomHiragana.english)
-        }
+
+        if (!options.includes(randomHiragana.english)) options.push(randomHiragana.english)
     }
     options.sort(() => Math.random() - 0.5)
 
     let optionsContainer = document.getElementById('options')
     optionsContainer.innerHTML = ''
+
     options.forEach((option) => {
         let button = document.createElement('button')
         button.innerText = option
@@ -113,17 +128,19 @@ const generateOptions = () => {
 }
 
 const checkAnswer = (selected, button) => {
+    button.disabled = true
+
     if (selected === correctAnswer.english) {
         button.style.backgroundColor = 'lightgreen'
-        resultLabel.innerText = '정답! 🎉\n곧 다음 문제로 넘어갑니다.'
+        resultLabel.innerText = `정답! 🎉\n${randomMessage(messages.correct)}`
         scoreUpdate(3)
         toggleButtons(true)
 
         setTimeout(() => {
             nextQuestion()
-        }, 1000)
+        }, 1500)
     } else {
-        resultLabel.innerText = '다시 시도해보세요~~'
+        resultLabel.innerText = randomMessage(messages.incorrect)
         scoreUpdate(-1)
 
         button.style.backgroundColor = 'lightcoral'

@@ -1,61 +1,102 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>히라가나 퀴즈</title>
+        <title>히라가나</title>
         <style>
             body {
-                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+            div {
                 text-align: center;
             }
+            input[type='checkbox'] {
+                display: none;
+            }
+            input[type='checkbox'] + label {
+                display: inline-block;
+                padding: 10px;
+                margin: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                cursor: pointer;
+            }
+            input[type='checkbox']:checked + label {
+                background-color: #bcffa8;
+                color: #000000;
+            }
             button {
+                padding: 10px 20px;
+                font-size: 20px;
+                cursor: pointer;
                 -webkit-appearance: none;
                 -moz-appearance: none;
                 appearance: none;
+                /* button style */
+                border: 1px solid #cccccc;
+                border-radius: 5px;
+                background-color: #fff;
             }
-            h1 {
-                font-size: 60px;
-            }
-            .quiz-container {
-                margin-top: 50px;
-            }
-            .options {
+
+            .container {
                 display: flex;
                 justify-content: center;
-                gap: 10px;
-                margin-top: 20px;
-            }
-            .options button {
-                padding: 10px 20px;
-                font-size: 20px;
-                cursor: pointer;
-                /* button style */
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                background-color: #fff;
-            }
-            .next {
-                margin-top: 20px;
-                padding: 10px 20px;
-                font-size: 20px;
-                cursor: pointer;
-                /* button style */
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                background-color: #fff;
+                align-items: center;
+                height: 100vh;
+                width: 100%;
             }
         </style>
     </head>
     <body>
-        <div class="quiz-container">
-            <h2 id="score">Score: 0</h2>
-            <h1 id="question">?</h1>
-            <div class="options" id="options"></div>
-            <p id="result"></p>
-            <button class="next" id="skipButton">건너뛰기</button>
+        <div class="container">
+            <div>
+                <h3>퀴즈의 히라가나 행을 선택하세요</h3>
+                <input type="checkbox" id="a" />
+                <label for="a">a (あ)</label>
+                <input type="checkbox" id="ka" />
+                <label for="ka">ka (か)</label>
+                <input type="checkbox" id="sa" />
+                <label for="sa">sa (さ)</label>
+            </div>
+            <div>
+                <button id="startButton">시작</button>
+            </div>
         </div>
 
-        <script src="index.js"></script>
+        <script>
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]')
+            let selected_hiragana = []
+
+            // url params
+            // r=a,ka,sa ...
+            checkboxes.forEach((checkbox) => {
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) {
+                        selected_hiragana.push(checkbox.id)
+                    } else {
+                        selected_hiragana = selected_hiragana.filter((hiragana) => hiragana !== checkbox.id)
+                    }
+
+                    console.log(selected_hiragana)
+                })
+            })
+
+            document.getElementById('startButton').addEventListener('click', () => {
+                if (selected_hiragana.length === 0) {
+                    alert('최소 하나 이상의 히라가나 행을 선택하세요')
+                    return
+                }
+
+                const url = new URL('main.html', window.location.href)
+                url.searchParams.append('r', selected_hiragana.join(','))
+                window.location.href = url.href
+            })
+        </script>
     </body>
 </html>
