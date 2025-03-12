@@ -41,20 +41,17 @@ let previousAnswers = [] // 5 questions
 let score = 0
 const scoreLabel = document.getElementById('score')
 
-function scoreUpdate(n) {
+const scoreUpdate = (n) => {
     if (!n) score = 0
     score += n
     scoreLabel.innerText = score
 }
 
-function toggleButtons(state) {
-    document.querySelectorAll('button').forEach((button) => {
-        button.disabled = state
-    })
-}
+const toggleButtons = (state) => document.querySelectorAll('button').forEach((button) => (button.disabled = state))
 
-function extractHiragana(obj) {
+const extractHiragana = (obj) => {
     let result = []
+
     for (const value of Object.values(obj)) {
         if (typeof value === 'object' && value !== null) {
             result = result.concat(extractHiragana(value))
@@ -66,13 +63,13 @@ function extractHiragana(obj) {
     return result
 }
 
-function getRandomHiragana() {
+const getRandomHiragana = () => {
     const hiragana = extractHiragana(hiraganaMap)
     const randomIndex = Math.floor(Math.random() * hiragana.length)
     return hiragana[randomIndex]
 }
 
-function nextQuestion() {
+const nextQuestion = () => {
     toggleButtons(false)
 
     resultLabel.innerText = ''
@@ -93,7 +90,7 @@ function nextQuestion() {
     generateOptions()
 }
 
-function generateOptions() {
+const generateOptions = () => {
     let options = [correctAnswer.english]
     while (options.length < 5) {
         let randomHiragana = getRandomHiragana()
@@ -113,9 +110,9 @@ function generateOptions() {
     })
 }
 
-function checkAnswer(selected, button) {
+const checkAnswer = (selected, button) => {
     if (selected === correctAnswer.english) {
-                button.style.backgroundColor = 'lightgreen'
+        button.style.backgroundColor = 'lightgreen'
         resultLabel.innerText = '정답! 🎉\n곧 다음 문제로 넘어갑니다.'
         scoreUpdate(3)
         toggleButtons(true)
