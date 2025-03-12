@@ -67,22 +67,71 @@
             a:hover {
                 text-decoration: underline;
             }
+
+            input[type='range'] {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 50%;
+                height: 8px;
+                background: #ddd;
+                border-radius: 4px;
+                outline: none;
+                transition: opacity 0.2s;
+            }
+
+            input[type='range']::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                background-color: #fff;
+                border: 2px solid #aaa;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+            input[type='range']::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                background-color: #fff;
+                border: 2px solid #aaa;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+
+            input[type='range']:hover::-webkit-slider-thumb {
+                transform: scale(1.2);
+            }
         </style>
     </head>
     <body>
         <div class="container">
             <div>
-                <h3>퀴즈의 히라가나 행을 선택하세요</h3>
+                <h2>퀴즈의 히라가나 행을 선택하세요</h2>
                 <input type="checkbox" id="a" />
                 <label for="a">a (あ)</label>
                 <input type="checkbox" id="ka" />
                 <label for="ka">ka (か)</label>
                 <input type="checkbox" id="sa" />
                 <label for="sa">sa (さ)</label>
+                <input type="checkbox" id="ta" />
+                <label for="ta">ta (た)</label>
+                <input type="checkbox" id="na" />
+                <label for="na">na (な)</label>
             </div>
-            <div>
+            <div style="margin-top: 20px">
+                <button id="selectAll">전체 선택</button>
                 <button id="startButton">시작하기</button>
             </div>
+            <!-- <div style="margin-top: 150px">
+                <h2>옵션 (선택)</h2>
+                <p>필요 시에만 선택하세요.</p>
+                <input type="checkbox" id="nextnow" />
+                <label for="nextnow">정답 후 바로 넘어가기</label>
+                <input type="range" id="duplevel" style="margin-top: 20px" min="1" max="4" value="4" />
+                <label for="duplevel">중복 </label>
+            </div> -->
         </div>
 
         <div class="footer">
@@ -92,23 +141,15 @@
 
         <script>
             const checkboxes = document.querySelectorAll('input[type="checkbox"]')
-            let selected_hiragana = []
-
-            // url params
-            // r=a,ka,sa ...
-            checkboxes.forEach((checkbox) => {
-                checkbox.addEventListener('change', () => {
-                    if (checkbox.checked) {
-                        selected_hiragana.push(checkbox.id)
-                    } else {
-                        selected_hiragana = selected_hiragana.filter((hiragana) => hiragana !== checkbox.id)
-                    }
-
-                    console.log(selected_hiragana)
-                })
-            })
+            const selectAll = document.getElementById('selectAll')
 
             document.getElementById('startButton').addEventListener('click', () => {
+                let selected_hiragana = []
+
+                checkboxes.forEach((checkbox) => {
+                    if (checkbox.checked) selected_hiragana.push(checkbox.id)
+                })
+
                 if (selected_hiragana.length === 0) {
                     alert('최소 하나 이상의 히라가나 행을 선택하세요')
                     return
@@ -117,6 +158,20 @@
                 const url = new URL('main.html', window.location.href)
                 url.searchParams.append('r', selected_hiragana.join(','))
                 window.location.href = url.href
+            })
+
+            selectAll.addEventListener('click', () => {
+                if (selectAll.innerHTML === '전체 선택') {
+                    selectAll.innerHTML = '전체 해제'
+                    checkboxes.forEach((checkbox) => {
+                        checkbox.checked = true
+                    })
+                } else {
+                    selectAll.innerHTML = '전체 선택'
+                    checkboxes.forEach((checkbox) => {
+                        checkbox.checked = false
+                    })
+                }
             })
         </script>
     </body>

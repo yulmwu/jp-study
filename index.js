@@ -32,6 +32,20 @@ const allHiraganaMap = {
         se: { hiragana: 'せ', korean: '세', english: 'se', hint: '' },
         so: { hiragana: 'そ', korean: '소', english: 'so', hint: '' },
     },
+    ta: {
+        ta: { hiragana: 'た', korean: '타', english: 'ta', hint: '' },
+        chi: { hiragana: 'ち', korean: '치', english: 'chi', hint: '' },
+        tsu: { hiragana: 'つ', korean: '츠', english: 'tsu', hint: '' },
+        te: { hiragana: 'て', korean: '테', english: 'te', hint: '' },
+        to: { hiragana: 'と', korean: '토', english: 'to', hint: '' },
+    },
+    na: {
+        na: { hiragana: 'な', korean: '나', english: 'na', hint: '' },
+        ni: { hiragana: 'に', korean: '니', english: 'ni', hint: '' },
+        nu: { hiragana: 'ぬ', korean: '누', english: 'nu', hint: '' },
+        ne: { hiragana: 'ね', korean: '네', english: 'ne', hint: '' },
+        no: { hiragana: 'の', korean: '노', english: 'no', hint: '' },
+    },
 }
 
 const messages = {
