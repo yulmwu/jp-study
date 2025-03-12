@@ -148,7 +148,7 @@ const checkAnswer = (selected, button) => {
 }
 
 skipButton.onclick = () => {
-    resultLabel.innerText = `정답은 ${questionLabel.innerText} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
+    resultLabel.innerText = `정답은 ${correctAnswer.english} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
     toggleButtons(true)
 
     document.querySelectorAll('button').forEach((button) => {
