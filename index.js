@@ -36,6 +36,16 @@ const hiraganaMap = Object.keys(allHiraganaMap)
     }, {})
 
 let correctAnswer = ''
+let previousAnswers = [] // 5 questions
+
+let score = 0
+const scoreLabel = document.getElementById('score')
+
+function scoreUpdate(n) {
+    if (!n) score = 0
+    score += n
+    scoreLabel.innerText = score
+}
 
 function toggleButtons(state) {
     document.querySelectorAll('button').forEach((button) => {
@@ -64,9 +74,20 @@ function getRandomHiragana() {
 
 function nextQuestion() {
     toggleButtons(false)
+
     resultLabel.innerText = ''
+
     const randomHiragana = getRandomHiragana()
     questionLabel.innerText = randomHiragana.hiragana
+
+    if (previousAnswers.includes(randomHiragana)) {
+        nextQuestion()
+        return
+    }
+
+    previousAnswers.push(randomHiragana)
+
+    if (previousAnswers.length > 3 * hiraganaRange.length) previousAnswers.shift()
 
     correctAnswer = randomHiragana
     generateOptions()
@@ -94,14 +115,18 @@ function generateOptions() {
 
 function checkAnswer(selected, button) {
     if (selected === correctAnswer.english) {
+                button.style.backgroundColor = 'lightgreen'
         resultLabel.innerText = '정답! 🎉\n곧 다음 문제로 넘어갑니다.'
+        scoreUpdate(3)
         toggleButtons(true)
+
         setTimeout(() => {
             nextQuestion()
-        }, 1500)
-        button.style.backgroundColor = 'lightgreen'
+        }, 1000)
     } else {
         resultLabel.innerText = '다시 시도해보세요~~'
+        scoreUpdate(-1)
+
         button.style.backgroundColor = 'lightcoral'
     }
 }
