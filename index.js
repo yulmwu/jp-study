@@ -5,7 +5,7 @@ const duplicate = urlParams.get('d')
 
 // settings
 // const hiraganaRange = ['a', 'ka', 'sa']
-const hiraganaRange = range ? range.split(',').map((r) => r.trim()) : ['a', 'ka', 'sa']
+const hiraganaRange = range ? range.split(',').map((r) => r.trim()) : ['a', 'ka', 'sa', 'ta', 'na']
 const duplicate_level = duplicate ? parseInt(duplicate) : 3
 
 console.log(`hiraganaRange: ${hiraganaRange.join(' | ')}, duplicate_level: ${duplicate_level}`)
@@ -164,6 +164,8 @@ const checkAnswer = (selected, button) => {
 skipButton.onclick = () => {
     resultLabel.innerText = `정답은 ${correctAnswer.english} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
     toggleButtons(true)
+
+    scoreUpdate(-5)
 
     document.querySelectorAll('button').forEach((button) => {
         if (button.innerText === correctAnswer.english) {
