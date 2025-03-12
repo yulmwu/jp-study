@@ -7,8 +7,6 @@
         <style>
             body {
                 display: flex;
-                justify-content: center;
-                align-items: center;
                 height: 100vh;
                 margin: 0;
             }
@@ -46,10 +44,28 @@
 
             .container {
                 display: flex;
+                flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 height: 100vh;
                 width: 100%;
+            }
+
+            .footer {
+                position: fixed;
+                bottom: 0;
+                padding: 10px;
+                font-size: 15px;
+                text-align: left;
+            }
+
+            a {
+                color: #000000;
+                text-decoration: none;
+            }
+
+            a:hover {
+                text-decoration: underline;
             }
         </style>
     </head>
@@ -65,8 +81,13 @@
                 <label for="sa">sa (さ)</label>
             </div>
             <div>
-                <button id="startButton">시작</button>
+                <button id="startButton">시작하기</button>
             </div>
+        </div>
+
+        <div class="footer">
+            <p>개발: <a href="https://github.com/yulmwu">김준영</a></p>
+            <p>데이터 제공: 윤선우</p>
         </div>
 
         <script>
