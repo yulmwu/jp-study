@@ -10,7 +10,7 @@ const msg = urlParams.get('msg') // message
 // settings
 // const hiraganaRange = ['a', 'ka', 'sa']
 const hiraganaRange = range ? range.split(',').map((r) => r.trim()) : ['a', 'ka', 'sa', 'ta', 'na']
-const duplicate_level = duplicate ? parseInt(duplicate) : 3
+const duplicate_level = duplicate ? parseInt(duplicate) : 4
 const timer_on = to ? to === 'true' : false
 const timer_seconds = ts ? parseInt(ts) : 3
 const next_now = nn ? nn === 'true' : false
