@@ -3,6 +3,9 @@ const range = urlParams.get('r')
 const duplicate = urlParams.get('d')
 const to = urlParams.get('to')
 const ts = urlParams.get('ts')
+const nn = urlParams.get('nn') // next now
+const pt = urlParams.get('pt') // particle
+const msg = urlParams.get('msg') // message
 
 // settings
 // const hiraganaRange = ['a', 'ka', 'sa']
@@ -10,8 +13,18 @@ const hiraganaRange = range ? range.split(',').map((r) => r.trim()) : ['a', 'ka'
 const duplicate_level = duplicate ? parseInt(duplicate) : 3
 const timer_on = to ? to === 'true' : false
 const timer_seconds = ts ? parseInt(ts) : 3
+const next_now = nn ? nn === 'true' : false
+const particle = pt ? pt === 'true' : false
+const message = msg ? msg === 'true' : false
 
-console.log(`hiraganaRange: ${hiraganaRange.join(' | ')}, duplicate_level: ${duplicate_level}`)
+console.log(`hiraganaRange: ${hiraganaRange.join(', ')}
+duplicate_level: ${duplicate_level}
+timer_on: ${timer_on}
+timer_seconds: ${timer_seconds}
+next_now: ${next_now}
+particle: ${particle}
+message: ${message}
+`)
 
 const allHiraganaMap = {
     a: {
@@ -48,6 +61,37 @@ const allHiraganaMap = {
         nu: { hiragana: 'ぬ', korean: '누', english: 'nu', hint: '' },
         ne: { hiragana: 'ね', korean: '네', english: 'ne', hint: '' },
         no: { hiragana: 'の', korean: '노', english: 'no', hint: '' },
+    },
+    ha: {
+        ha: { hiragana: 'は', korean: '하', english: 'ha', hint: '' },
+        hi: { hiragana: 'ひ', korean: '히', english: 'hi', hint: '' },
+        fu: { hiragana: 'ふ', korean: '후', english: 'fu', hint: '' },
+        he: { hiragana: 'へ', korean: '헤', english: 'he', hint: '' },
+        ho: { hiragana: 'ほ', korean: '호', english: 'ho', hint: '' },
+    },
+    ma: {
+        ma: { hiragana: 'ま', korean: '마', english: 'ma', hint: '' },
+        mi: { hiragana: 'み', korean: '미', english: 'mi', hint: '' },
+        mu: { hiragana: 'む', korean: '무', english: 'mu', hint: '' },
+        me: { hiragana: 'め', korean: '메', english: 'me', hint: '' },
+        mo: { hiragana: 'も', korean: '모', english: 'mo', hint: '' },
+    },
+    ya: {
+        ya: { hiragana: 'や', korean: '야', english: 'ya', hint: '' },
+        yu: { hiragana: 'ゆ', korean: '유', english: 'yu', hint: '' },
+        yo: { hiragana: 'よ', korean: '요', english: 'yo', hint: '' },
+    },
+    ra: {
+        ra: { hiragana: 'ら', korean: '라', english: 'ra', hint: '' },
+        ri: { hiragana: 'り', korean: '리', english: 'ri', hint: '' },
+        ru: { hiragana: 'る', korean: '루', english: 'ru', hint: '' },
+        re: { hiragana: 'れ', korean: '레', english: 're', hint: '' },
+        ro: { hiragana: 'ろ', korean: '로', english: 'ro', hint: '' },
+    },
+    wa: {
+        wa: { hiragana: 'わ', korean: '와', english: 'wa', hint: '' },
+        wo: { hiragana: 'を', korean: '오', english: 'wo', hint: '' },
+        n: { hiragana: 'ん', korean: '응', english: 'n', hint: '' },
     },
 }
 
@@ -86,9 +130,14 @@ let isRunning = false
 
 const updateDisplay = () => {
     if (timer_on) timerLabel.innerText = `시간 제한: ${seconds}초 남음`
+    else timerLabel.innerText = ''
 
-    if (seconds <= 3) timerLabel.style.color = 'red'
-    else timerLabel.style.color = 'black'
+    if (seconds <= 3) updateTimerColor('red')
+    else updateTimerColor('black')
+}
+
+const updateTimerColor = (color) => {
+    if (timer_on) timerLabel.style.color = color
 }
 
 const startTimer = (timeout) => {
@@ -111,7 +160,7 @@ const startTimer = (timeout) => {
 const stopTimer = () => {
     clearInterval(timer)
     isRunning = false
-    timerLabel.style.color = 'blue'
+    updateTimerColor('blue')
 }
 
 const resetTimer = () => {
@@ -120,7 +169,10 @@ const resetTimer = () => {
     updateDisplay()
 }
 
-const randomMessage = (messages) => messages[Math.floor(Math.random() * messages.length)]
+const randomMessage = (messages) => {
+    if (!message) return ''
+    return messages[Math.floor(Math.random() * messages.length)]
+}
 
 const toggleButtons = (state) => document.querySelectorAll('button').forEach((button) => (button.disabled = state))
 
@@ -150,7 +202,7 @@ const nextQuestion = () => {
     if (timer_on)
         startTimer(() => {
             resultLabel.innerText = `시간 초과! 정답은 ${correctAnswer.english} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
-            timerLabel.style.color = 'blue'
+            updateTimerColor('blue')
 
             toggleButtons(true)
 
@@ -206,19 +258,50 @@ const generateOptions = () => {
     })
 }
 
+const createFirework = (x, y) => {
+    for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div')
+        particle.classList.add('particle')
+        document.body.appendChild(particle)
+
+        const angle = Math.random() * 2 * Math.PI
+        const distance = Math.random() * 100 + 50
+        const xOffset = Math.cos(angle) * distance + 'px'
+        const yOffset = Math.sin(angle) * distance + 'px'
+
+        particle.style.setProperty('--x', xOffset)
+        particle.style.setProperty('--y', yOffset)
+        particle.style.left = x + 'px'
+        particle.style.top = y + 'px'
+        particle.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`
+
+        setTimeout(() => particle.remove(), 1300)
+    }
+}
+
 const checkAnswer = (selected, button) => {
     button.disabled = true
 
     if (selected === correctAnswer.english) {
+        if (next_now) {
+            nextQuestion()
+            return
+        }
+
         button.style.backgroundColor = 'lightgreen'
         resultLabel.innerText = `정답! 🎉\n${randomMessage(messages.correct)}`
         scoreUpdate(3)
         toggleButtons(true)
         stopTimer()
 
+        if (particle) {
+            const rect = button.getBoundingClientRect()
+            createFirework(rect.left + rect.width / 2, rect.top + rect.height / 2)
+        }
+
         setTimeout(() => {
             nextQuestion()
-        }, 1000)
+        }, 1300)
     } else {
         resultLabel.innerText = randomMessage(messages.incorrect)
         scoreUpdate(-1)
@@ -232,7 +315,7 @@ skipButton.onclick = () => {
     toggleButtons(true)
     stopTimer()
 
-    scoreUpdate(-5)
+    scoreUpdate(-2)
 
     document.querySelectorAll('button').forEach((button) => {
         if (button.innerText === correctAnswer.english) {
