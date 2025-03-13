@@ -1,12 +1,15 @@
 const urlParams = new URLSearchParams(window.location.search)
 const range = urlParams.get('r')
 const duplicate = urlParams.get('d')
-
+const to = urlParams.get('to')
+const ts = urlParams.get('ts')
 
 // settings
 // const hiraganaRange = ['a', 'ka', 'sa']
 const hiraganaRange = range ? range.split(',').map((r) => r.trim()) : ['a', 'ka', 'sa', 'ta', 'na']
 const duplicate_level = duplicate ? parseInt(duplicate) : 3
+const timer_on = to ? to === 'true' : false
+const timer_seconds = ts ? parseInt(ts) : 3
 
 console.log(`hiraganaRange: ${hiraganaRange.join(' | ')}, duplicate_level: ${duplicate_level}`)
 
@@ -55,6 +58,7 @@ const messages = {
 
 const resultLabel = document.getElementById('result')
 const questionLabel = document.getElementById('question')
+const timerLabel = document.getElementById('timer')
 const skipButton = document.getElementById('skipButton')
 
 const hiraganaMap = Object.keys(allHiraganaMap)
@@ -74,6 +78,46 @@ const scoreUpdate = (n) => {
     if (!n) score = 0
     score += n
     scoreLabel.innerText = score
+}
+
+let timer = timer_seconds
+let seconds = 0
+let isRunning = false
+
+const updateDisplay = () => {
+    if (timer_on) timerLabel.innerText = `시간 제한: ${seconds}초 남음`
+
+    if (seconds <= 3) timerLabel.style.color = 'red'
+    else timerLabel.style.color = 'black'
+}
+
+const startTimer = (timeout) => {
+    if (!isRunning) {
+        isRunning = true
+        timer = setInterval(() => {
+            if (seconds <= 1) {
+                stopTimer()
+                resetTimer()
+                timeout()
+                return
+            }
+
+            seconds--
+            updateDisplay()
+        }, 1000)
+    }
+}
+
+const stopTimer = () => {
+    clearInterval(timer)
+    isRunning = false
+    timerLabel.style.color = 'blue'
+}
+
+const resetTimer = () => {
+    stopTimer()
+    seconds = timer_seconds
+    updateDisplay()
 }
 
 const randomMessage = (messages) => messages[Math.floor(Math.random() * messages.length)]
@@ -102,6 +146,27 @@ const getRandomHiragana = () => {
 
 const nextQuestion = () => {
     toggleButtons(false)
+    resetTimer()
+    if (timer_on)
+        startTimer(() => {
+            resultLabel.innerText = `시간 초과! 정답은 ${correctAnswer.english} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
+            timerLabel.style.color = 'blue'
+
+            toggleButtons(true)
+
+            scoreUpdate(-5)
+
+            document.querySelectorAll('button').forEach((button) => {
+                if (button.innerText === correctAnswer.english) {
+                    button.style.backgroundColor = 'lightgreen'
+                }
+            })
+
+            setTimeout(() => {
+                nextQuestion()
+            }, 1500)
+            return
+        })
 
     resultLabel.innerText = ''
 
@@ -149,6 +214,7 @@ const checkAnswer = (selected, button) => {
         resultLabel.innerText = `정답! 🎉\n${randomMessage(messages.correct)}`
         scoreUpdate(3)
         toggleButtons(true)
+        stopTimer()
 
         setTimeout(() => {
             nextQuestion()
@@ -164,6 +230,7 @@ const checkAnswer = (selected, button) => {
 skipButton.onclick = () => {
     resultLabel.innerText = `정답은 ${correctAnswer.english} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
     toggleButtons(true)
+    stopTimer()
 
     scoreUpdate(-5)
 
