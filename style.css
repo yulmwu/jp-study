@@ -49,7 +49,16 @@ h1 {
 .footer {
     position: fixed;
     bottom: 0;
-    padding: 10px;
+    padding: 12px;
+    font-size: 13px;
+    text-align: left;
+}
+
+.footer2 {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 12px;
     font-size: 13px;
     text-align: left;
 }
