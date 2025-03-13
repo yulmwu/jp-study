@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>폭죽 효과</title>
+    <style>
+        body {
+            background-color: black;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+        }
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: yellow;
+            border-radius: 50%;
+            opacity: 0;
+            animation: explode 1s ease-out forwards;
+        }
+        @keyframes explode {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--x), var(--y)) scale(0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function createFirework(x, y) {
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement("div");
+                particle.classList.add("particle");
+                document.body.appendChild(particle);
+                
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 100 + 50;
+                const xOffset = Math.cos(angle) * distance + "px";
+                const yOffset = Math.sin(angle) * distance + "px";
+                
+                particle.style.setProperty("--x", xOffset);
+                particle.style.setProperty("--y", yOffset);
+                particle.style.left = x + "px";
+                particle.style.top = y + "px";
+                particle.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+        
+        document.addEventListener("click", (e) => {
+            createFirework(e.clientX, e.clientY);
+        });
+    </script>
+</body>
+</html>
