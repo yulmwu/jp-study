@@ -283,16 +283,16 @@ const checkAnswer = (selected, button) => {
     button.disabled = true
 
     if (selected === correctAnswer.english) {
+        button.style.backgroundColor = 'lightgreen'
+        resultLabel.innerText = `정답! 🎉\n${randomMessage(messages.correct)}`
+        toggleButtons(true)
+        scoreUpdate(3)
+        stopTimer()
+
         if (next_now) {
             nextQuestion()
             return
         }
-
-        button.style.backgroundColor = 'lightgreen'
-        resultLabel.innerText = `정답! 🎉\n${randomMessage(messages.correct)}`
-        scoreUpdate(3)
-        toggleButtons(true)
-        stopTimer()
 
         if (particle) {
             const rect = button.getBoundingClientRect()
