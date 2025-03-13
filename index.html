@@ -47,7 +47,7 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                height: 100vh;
+                height: 70vh;
                 width: 100%;
             }
 
@@ -55,7 +55,7 @@
                 position: fixed;
                 bottom: 0;
                 padding: 10px;
-                font-size: 15px;
+                font-size: 13px;
                 text-align: left;
             }
 
@@ -103,39 +103,74 @@
             input[type='range']:hover::-webkit-slider-thumb {
                 transform: scale(1.2);
             }
+
+            .time {
+                width: 20%;
+                padding: 12px 20px;
+                /* margin: 8px 0; */
+                display: inline-block;
+                border: 1px solid #ccc;
+                box-sizing: border-box;
+            }
+
+            .desc {
+                cursor: pointer;
+            }
         </style>
     </head>
     <body>
         <div class="container">
             <div>
                 <h2>퀴즈의 히라가나 행을 선택하세요</h2>
-                <input type="checkbox" id="a" />
+                <input type="checkbox" id="a" x-h />
                 <label for="a">a (あ)</label>
-                <input type="checkbox" id="ka" />
+                <input type="checkbox" id="ka" x-h />
                 <label for="ka">ka (か)</label>
-                <input type="checkbox" id="sa" />
+                <input type="checkbox" id="sa" x-h />
                 <label for="sa">sa (さ)</label>
-                <input type="checkbox" id="ta" />
+                <input type="checkbox" id="ta" x-h />
                 <label for="ta">ta (た)</label>
-                <input type="checkbox" id="na" />
+                <input type="checkbox" id="na" x-h />
                 <label for="na">na (な)</label>
+                <input type="checkbox" id="ha" x-h />
+                <label for="ha">ha (は)</label>
+                <input type="checkbox" id="ma" x-h />
+                <label for="ma">ma (ま)</label>
+                <input type="checkbox" id="ya" x-h />
+                <label for="ya">ya (や)</label>
+                <input type="checkbox" id="ra" x-h />
+                <label for="ra">ra (ら)</label>
+                <input type="checkbox" id="wa" x-h />
+                <label for="wa">wa (わ), n (ん)</label>
             </div>
             <div style="margin-top: 20px">
-                <button id="selectAll">전체 선택</button>
                 <button id="startButton">시작하기</button>
+                <button id="selectAll">전체 선택</button>
             </div>
-            <!-- <div style="margin-top: 150px">
+            <div style="margin-top: 20px">
                 <h2>옵션 (선택)</h2>
-                <p>필요 시에만 선택하세요.</p>
+                <p>필요 시에만 선택하세요. <span class="desc" id="desc">설명(클릭)</span></p>
+                <input type="checkbox" id="timer" />
+                <label for="timer">시간 제한 끔</label>
+
+                <input type="text" id="time" class="time" placeholder="시간 (초)" style="display: none" value="3" />
+                <label for="time" style="display: none">초</label>
+                <input type="checkbox" id="" />
+            </div>
+            <div>
                 <input type="checkbox" id="nextnow" />
-                <label for="nextnow">정답 후 바로 넘어가기</label>
-                <input type="range" id="duplevel" style="margin-top: 20px" min="1" max="4" value="4" />
-                <label for="duplevel">중복 </label>
-            </div> -->
+                <label for="nextnow">정답 후 바로 넘어가기 끔</label>
+
+                <input type="checkbox" id="particle" checked />
+                <label for="particle">파티클 효과 켬</label>
+
+                <input type="checkbox" id="message" checked />
+                <label for="message">정답/오답 문구 켬</label>
+            </div>
         </div>
 
         <div class="footer">
-            <p>개발: <a href="https://github.com/yulmwu">김준영</a></p>
+            <p>개발 & 버그 제보: <a href="https://github.com/yulmwu">김준영</a></p>
             <p>데이터 제공: 윤선우</p>
         </div>
 
@@ -143,10 +178,60 @@
             const checkboxes = document.querySelectorAll('input[type="checkbox"]')
             const selectAll = document.getElementById('selectAll')
 
-            document.getElementById('startButton').addEventListener('click', () => {
+            const timer = document.getElementById('timer')
+            const time = document.getElementById('time')
+            const timeLabel = document.querySelector('label[for="time"]')
+
+            const nextnow = document.getElementById('nextnow')
+            const particle = document.getElementById('particle')
+            const message = document.getElementById('message')
+
+            const duplevel = document.getElementById('duplevel')
+
+            const startButton = document.getElementById('startButton')
+            const desc = document.getElementById('desc')
+
+            timer.addEventListener('change', (e) => {
+                if (timer.checked) {
+                    timer.nextElementSibling.innerHTML = '시간 제한 켬'
+                    time.style.display = 'inline-block'
+                    timeLabel.style.display = 'inline-block'
+                } else {
+                    timer.nextElementSibling.innerHTML = '시간 제한 끔'
+                    time.style.display = 'none'
+                    timeLabel.style.display = 'none'
+                }
+            })
+
+            nextnow.addEventListener('change', (e) => {
+                if (nextnow.checked) {
+                    nextnow.nextElementSibling.innerHTML = '정답 후 바로 넘어가기 켬'
+                } else {
+                    nextnow.nextElementSibling.innerHTML = '정답 후 바로 넘어가기 끔'
+                }
+            })
+
+            particle.addEventListener('change', (e) => {
+                if (particle.checked) {
+                    particle.nextElementSibling.innerHTML = '파티클 효과 켬'
+                } else {
+                    particle.nextElementSibling.innerHTML = '파티클 효과 끔'
+                }
+            })
+
+            message.addEventListener('change', (e) => {
+                if (message.checked) {
+                    message.nextElementSibling.innerHTML = '정답/오답 문구 켬'
+                } else {
+                    message.nextElementSibling.innerHTML = '정답/오답 문구 끔'
+                }
+            })
+
+            startButton.addEventListener('click', () => {
                 let selected_hiragana = []
 
                 checkboxes.forEach((checkbox) => {
+                    if (!checkbox.hasAttribute('x-h')) return
                     if (checkbox.checked) selected_hiragana.push(checkbox.id)
                 })
 
@@ -155,8 +240,23 @@
                     return
                 }
 
+                if (selected_hiragana.length === 1 && selected_hiragana[0] === 'wa') {
+                    alert('wa 행 및 n은 단독으로 선택할 수 없습니다')
+                    return
+                }
+
                 const url = new URL('main.html', window.location.href)
                 url.searchParams.append('r', selected_hiragana.join(','))
+
+                url.searchParams.append('to', timer.checked ? 'true' : 'false')
+                url.searchParams.append('ts', time.value)
+
+                url.searchParams.append('nn', nextnow.checked ? 'true' : 'false')
+                url.searchParams.append('pt', particle.checked ? 'true' : 'false')
+                url.searchParams.append('msg', message.checked ? 'true' : 'false')
+
+                console.log(url.href)
+
                 window.location.href = url.href
             })
 
@@ -164,14 +264,29 @@
                 if (selectAll.innerHTML === '전체 선택') {
                     selectAll.innerHTML = '전체 해제'
                     checkboxes.forEach((checkbox) => {
+                        if (!checkbox.hasAttribute('x-h')) return
                         checkbox.checked = true
                     })
                 } else {
                     selectAll.innerHTML = '전체 선택'
                     checkboxes.forEach((checkbox) => {
+                        if (!checkbox.hasAttribute('x-h')) return
                         checkbox.checked = false
                     })
                 }
+            })
+
+            desc.addEventListener('click', () => {
+                alert(`시간 제한 : 정답을 맞추는데 제한 시간을 둘지 여부를 선택합니다. (기본값: 끔)
+시간 제한의 시간을 설정할 수 있습니다. (기본값: 3초)
+
+정답 후 바로 넘어가기 : 정답을 맞추면 바로 다음 문제로 넘어갑니다. (기본값: 끔)
+
+파티클 효과 : 정답을 맞추면 화면에 파티클 효과가 나타납니다.
+기기의 성능에 따라 렉이 발생하여 문제가 생긴다면 끄세요. (기본값: 켬)
+
+정답/오답 문구 : 정답을 맞추거나 틀리면 화면에 특별한 문구가 나타납니다. (기본값: 켬)
+`)
             })
         </script>
     </body>
