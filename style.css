@@ -7,6 +7,11 @@ button {
     -moz-appearance: none;
     appearance: none;
 }
+button:disabled,
+button[disabled]{
+  color: #303030;
+}
+
 h1 {
     font-size: 60px;
 }
@@ -45,7 +50,7 @@ h1 {
     position: fixed;
     bottom: 0;
     padding: 10px;
-    font-size: 15px;
+    font-size: 13px;
     text-align: left;
 }
 
@@ -56,4 +61,25 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: yellow;
+    border-radius: 50%;
+    opacity: 0;
+    animation: explode 1.2s ease-out forwards;
+}
+
+@keyframes explode {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y)) scale(0.5);
+    }
 }
