@@ -244,6 +244,11 @@
                     return
                 }
 
+                if (selected_hiragana.length === 1 && selected_hiragana[0] === 'ya') {
+                    alert('ya 행은 단독으로 선택할 수 없습니다')
+                    return
+                }
+
                 const url = new URL('main.html', window.location.href)
                 url.searchParams.append('r', selected_hiragana.join(','))
 
