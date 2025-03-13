@@ -290,7 +290,10 @@ const checkAnswer = (selected, button) => {
         stopTimer()
 
         if (next_now) {
-            nextQuestion()
+            setTimeout(() => {
+                nextQuestion()
+            }, 100)
+
             return
         }
 
