@@ -21,7 +21,7 @@ const defaultSettings: Settings = {
     message: true,
 }
 
-const useSettings = create<Settings>((set) => (defaultSettings))
+const useSettings = create<Settings>((set) => defaultSettings)
 
 const StartMenu = () => {
     const selectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -87,7 +87,7 @@ const StartMenu = () => {
         error.classList.remove('hidden')
     }
 
-    const startGame = () => {
+    const updateSettings = (start: boolean) => {
         const checkboxes = document.querySelectorAll('input[type="checkbox"]')
         const selectedHiragana = Array.from(checkboxes)
             .filter((checkbox) => (checkbox as HTMLInputElement).checked)
@@ -109,24 +109,30 @@ const StartMenu = () => {
             return
         }
 
-        const timer_checked = (document.getElementById('timer') as HTMLInputElement).checked
+        const timer = (document.getElementById('timer') as HTMLInputElement).checked
         const time = parseInt((document.getElementById('time') as HTMLInputElement).value)
 
-        const nextNow_checked = (document.getElementById('nextnow') as HTMLInputElement).checked
-        const particle_checked = (document.getElementById('particle') as HTMLInputElement).checked
-        const message_checked = (document.getElementById('message') as HTMLInputElement).checked
+        const nextNow = (document.getElementById('nextnow') as HTMLInputElement).checked
+        const particle = (document.getElementById('particle') as HTMLInputElement).checked
+        const message = (document.getElementById('message') as HTMLInputElement).checked
 
         useSettings.setState({
-            playing: true,
+            playing: start,
             hiragana: selectedHiragana,
-            timer: timer_checked,
-            time: timer_checked ? time : 0,
-            nextNow: nextNow_checked,
-            particle: particle_checked,
-            message: message_checked,
+            timer: timer,
+            time,
+            nextNow,
+            particle,
+            message,
         })
+    }
 
-        console.log(useSettings.getState())
+    const startGame = () => updateSettings(true)
+
+    const status = () => {
+        updateSettings(false)
+        const settings = useSettings.getState()
+        alert(JSON.stringify(settings, null, 2))
     }
 
     return (
@@ -212,6 +218,9 @@ const StartMenu = () => {
                     </a>
                 </p>
                 <p>데이터 제공: 윤선우</p>
+                <p className='cursor-pointer' onClick={status}>
+                    상태 확인
+                </p>
             </div>
         </div>
     )
