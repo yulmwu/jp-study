@@ -11,7 +11,7 @@ interface Settings {
     message: boolean
 }
 
-const useSettings = create<Settings>((set) => ({
+const defaultSettings: Settings = {
     playing: false,
     hiragana: [],
     timer: false,
@@ -19,7 +19,9 @@ const useSettings = create<Settings>((set) => ({
     nextNow: false,
     particle: true,
     message: true,
-}))
+}
+
+const useSettings = create<Settings>((set) => (defaultSettings))
 
 const StartMenu = () => {
     const selectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -231,4 +233,4 @@ const hiraganaMap: Record<string, string> = {
 const getHiragana = (row: string) => hiraganaMap[row] ?? row
 
 export default StartMenu
-export { useSettings }
+export { useSettings, defaultSettings }
