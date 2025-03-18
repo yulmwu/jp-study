@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { useSettings, defaultSettings } from './StartMenu'
+import { useSettings } from './StartMenu'
 import _allHiraganaMap from '../data/hiragana.json'
 import messageMap from '../data/message.json'
 
