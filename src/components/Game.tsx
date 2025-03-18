@@ -17,6 +17,27 @@ interface Hiragana {
     romaji: string
 }
 
+const createFirework = (x: number, y: number) => {
+    for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div')
+        particle.classList.add('particle')
+        document.body.appendChild(particle)
+
+        const angle = Math.random() * 2 * Math.PI
+        const distance = Math.random() * 100 + 50
+        const xOffset = Math.cos(angle) * distance + 'px'
+        const yOffset = Math.sin(angle) * distance + 'px'
+
+        particle.style.setProperty('--x', xOffset)
+        particle.style.setProperty('--y', yOffset)
+        particle.style.left = x + 'px'
+        particle.style.top = y + 'px'
+        particle.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`
+
+        setTimeout(() => particle.remove(), 1300)
+    }
+}
+
 const Game = () => {
     let { playing, score, hiraganaRange, timer, time, nextNow, particle, message, duplevel } = useSettings((state) => state)
 
@@ -137,11 +158,12 @@ const Game = () => {
 
         if (option === correctAnswer) {
             button.classList.add('correct')
+            scoreUpdate(3)
+            toggleButtons(true)
+
+            if (message) resultRef.current!.innerText = `정답! 🎉\n${randomMessage(messageMap.correct)}`
 
             if (nextNow) {
-                scoreUpdate(1)
-                toggleButtons(true)
-                
                 setTimeout(() => {
                     nextQuestion()
                 }, 300)
@@ -149,10 +171,10 @@ const Game = () => {
                 return
             }
 
-            if (message) resultRef.current!.innerText = `정답! 🎉\n${randomMessage(messageMap.correct)}`
-
-            scoreUpdate(3)
-            toggleButtons(true)
+            if (particle) {
+                const rect = button.getBoundingClientRect()
+                createFirework(rect.left + rect.width / 2, rect.top + rect.height / 2)
+            }
 
             setTimeout(() => {
                 nextQuestion()

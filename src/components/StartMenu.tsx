@@ -81,6 +81,7 @@ const StartMenu = () => {
     const onParticleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.currentTarget.checked) {
             checkboxLabelChange(e, '파티클 효과 켬')
+            
         } else {
             checkboxLabelChange(e, '파티클 효과 끔')
         }
