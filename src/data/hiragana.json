@@ -1,0 +1,298 @@
+{
+    "a": {
+        "a": {
+            "hiragana": "あ",
+            "korean": "아",
+            "romaji": "a",
+            "hint": ""
+        },
+        "i": {
+            "hiragana": "い",
+            "korean": "이",
+            "romaji": "i",
+            "hint": ""
+        },
+        "u": {
+            "hiragana": "う",
+            "korean": "우",
+            "romaji": "u",
+            "hint": ""
+        },
+        "e": {
+            "hiragana": "え",
+            "korean": "에",
+            "romaji": "e",
+            "hint": ""
+        },
+        "o": {
+            "hiragana": "お",
+            "korean": "오",
+            "romaji": "o",
+            "hint": ""
+        }
+    },
+    "ka": {
+        "ka": {
+            "hiragana": "か",
+            "korean": "카",
+            "romaji": "ka",
+            "hint": ""
+        },
+        "ki": {
+            "hiragana": "き",
+            "korean": "키",
+            "romaji": "ki",
+            "hint": ""
+        },
+        "ku": {
+            "hiragana": "く",
+            "korean": "쿠",
+            "romaji": "ku",
+            "hint": ""
+        },
+        "ke": {
+            "hiragana": "け",
+            "korean": "케",
+            "romaji": "ke",
+            "hint": ""
+        },
+        "ko": {
+            "hiragana": "こ",
+            "korean": "코",
+            "romaji": "ko",
+            "hint": ""
+        }
+    },
+    "sa": {
+        "sa": {
+            "hiragana": "さ",
+            "korean": "사",
+            "romaji": "sa",
+            "hint": ""
+        },
+        "shi": {
+            "hiragana": "し",
+            "korean": "시",
+            "romaji": "shi",
+            "hint": ""
+        },
+        "su": {
+            "hiragana": "す",
+            "korean": "수",
+            "romaji": "su",
+            "hint": ""
+        },
+        "se": {
+            "hiragana": "せ",
+            "korean": "세",
+            "romaji": "se",
+            "hint": ""
+        },
+        "so": {
+            "hiragana": "そ",
+            "korean": "소",
+            "romaji": "so",
+            "hint": ""
+        }
+    },
+    "ta": {
+        "ta": {
+            "hiragana": "た",
+            "korean": "타",
+            "romaji": "ta",
+            "hint": ""
+        },
+        "chi": {
+            "hiragana": "ち",
+            "korean": "치",
+            "romaji": "chi",
+            "hint": ""
+        },
+        "tsu": {
+            "hiragana": "つ",
+            "korean": "츠",
+            "romaji": "tsu",
+            "hint": ""
+        },
+        "te": {
+            "hiragana": "て",
+            "korean": "테",
+            "romaji": "te",
+            "hint": ""
+        },
+        "to": {
+            "hiragana": "と",
+            "korean": "토",
+            "romaji": "to",
+            "hint": ""
+        }
+    },
+    "na": {
+        "na": {
+            "hiragana": "な",
+            "korean": "나",
+            "romaji": "na",
+            "hint": ""
+        },
+        "ni": {
+            "hiragana": "に",
+            "korean": "니",
+            "romaji": "ni",
+            "hint": ""
+        },
+        "nu": {
+            "hiragana": "ぬ",
+            "korean": "누",
+            "romaji": "nu",
+            "hint": ""
+        },
+        "ne": {
+            "hiragana": "ね",
+            "korean": "네",
+            "romaji": "ne",
+            "hint": ""
+        },
+        "no": {
+            "hiragana": "の",
+            "korean": "노",
+            "romaji": "no",
+            "hint": ""
+        }
+    },
+    "ha": {
+        "ha": {
+            "hiragana": "は",
+            "korean": "하",
+            "romaji": "ha",
+            "hint": ""
+        },
+        "hi": {
+            "hiragana": "ひ",
+            "korean": "히",
+            "romaji": "hi",
+            "hint": ""
+        },
+        "fu": {
+            "hiragana": "ふ",
+            "korean": "후",
+            "romaji": "fu",
+            "hint": ""
+        },
+        "he": {
+            "hiragana": "へ",
+            "korean": "헤",
+            "romaji": "he",
+            "hint": ""
+        },
+        "ho": {
+            "hiragana": "ほ",
+            "korean": "호",
+            "romaji": "ho",
+            "hint": ""
+        }
+    },
+    "ma": {
+        "ma": {
+            "hiragana": "ま",
+            "korean": "마",
+            "romaji": "ma",
+            "hint": ""
+        },
+        "mi": {
+            "hiragana": "み",
+            "korean": "미",
+            "romaji": "mi",
+            "hint": ""
+        },
+        "mu": {
+            "hiragana": "む",
+            "korean": "무",
+            "romaji": "mu",
+            "hint": ""
+        },
+        "me": {
+            "hiragana": "め",
+            "korean": "메",
+            "romaji": "me",
+            "hint": ""
+        },
+        "mo": {
+            "hiragana": "も",
+            "korean": "모",
+            "romaji": "mo",
+            "hint": ""
+        }
+    },
+    "ya": {
+        "ya": {
+            "hiragana": "や",
+            "korean": "야",
+            "romaji": "ya",
+            "hint": ""
+        },
+        "yu": {
+            "hiragana": "ゆ",
+            "korean": "유",
+            "romaji": "yu",
+            "hint": ""
+        },
+        "yo": {
+            "hiragana": "よ",
+            "korean": "요",
+            "romaji": "yo",
+            "hint": ""
+        }
+    },
+    "ra": {
+        "ra": {
+            "hiragana": "ら",
+            "korean": "라",
+            "romaji": "ra",
+            "hint": ""
+        },
+        "ri": {
+            "hiragana": "り",
+            "korean": "리",
+            "romaji": "ri",
+            "hint": ""
+        },
+        "ru": {
+            "hiragana": "る",
+            "korean": "루",
+            "romaji": "ru",
+            "hint": ""
+        },
+        "re": {
+            "hiragana": "れ",
+            "korean": "레",
+            "romaji": "re",
+            "hint": ""
+        },
+        "ro": {
+            "hiragana": "ろ",
+            "korean": "로",
+            "romaji": "ro",
+            "hint": ""
+        }
+    },
+    "wa": {
+        "wa": {
+            "hiragana": "わ",
+            "korean": "와",
+            "romaji": "wa",
+            "hint": ""
+        },
+        "wo": {
+            "hiragana": "を",
+            "korean": "오",
+            "romaji": "wo",
+            "hint": ""
+        },
+        "n": {
+            "hiragana": "ん",
+            "korean": "응",
+            "romaji": "n",
+            "hint": ""
+        }
+    }
+}

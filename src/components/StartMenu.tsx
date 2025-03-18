@@ -1,29 +1,40 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { create } from 'zustand'
 
 interface Settings {
     playing: boolean
-    hiragana: Array<string>
+    score: number
+    hiraganaRange: Array<string>
     timer: boolean
     time: number
     nextNow: boolean
     particle: boolean
     message: boolean
+    duplevel: number
 }
 
 const defaultSettings: Settings = {
     playing: false,
-    hiragana: [],
+    score: 0,
+    hiraganaRange: [],
     timer: false,
     time: 3,
     nextNow: false,
     particle: true,
     message: true,
+    duplevel: 4,
 }
 
 const useSettings = create<Settings>((set) => defaultSettings)
 
 const StartMenu = () => {
+    const timerRef = useRef<HTMLInputElement>(null)
+    const timeRef = useRef<HTMLInputElement>(null)
+    const nextnowRef = useRef<HTMLInputElement>(null)
+    const particleRef = useRef<HTMLInputElement>(null)
+    const messageRef = useRef<HTMLInputElement>(null)
+    const errorRef = useRef<HTMLDivElement>(null)   
+
     const selectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
         const update = (checked: boolean) => {
             const checkboxes = document.querySelectorAll('input[type="checkbox"]')
@@ -47,7 +58,7 @@ const StartMenu = () => {
     }
 
     const onTimerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const timeInput = document.getElementById('time') as HTMLInputElement
+        const timeInput = timeRef.current as HTMLInputElement
         if (e.currentTarget.checked) {
             timeInput.disabled = false
             checkboxLabelChange(e, '시간 제한 켬')
@@ -82,7 +93,7 @@ const StartMenu = () => {
     }
 
     const error = (message: string) => {
-        const error = document.getElementById('error') as HTMLDivElement
+        const error = errorRef.current as HTMLDivElement
         error.textContent = message
         error.classList.remove('hidden')
     }
@@ -109,16 +120,16 @@ const StartMenu = () => {
             return
         }
 
-        const timer = (document.getElementById('timer') as HTMLInputElement).checked
-        const time = parseInt((document.getElementById('time') as HTMLInputElement).value)
+        const timer = (timerRef.current as HTMLInputElement).checked
+        const time = parseInt((timeRef.current as HTMLInputElement).value)
 
-        const nextNow = (document.getElementById('nextnow') as HTMLInputElement).checked
-        const particle = (document.getElementById('particle') as HTMLInputElement).checked
-        const message = (document.getElementById('message') as HTMLInputElement).checked
+        const nextNow = (nextnowRef.current as HTMLInputElement).checked
+        const particle = (particleRef.current as HTMLInputElement).checked
+        const message = (messageRef.current as HTMLInputElement).checked
 
         useSettings.setState({
             playing: start,
-            hiragana: selectedHiragana,
+            hiraganaRange: selectedHiragana,
             timer: timer,
             time,
             nextNow,
@@ -137,7 +148,6 @@ const StartMenu = () => {
 
     return (
         <div className='container'>
-            {/* 히라가나 선택 카드 */}
             <div className='card'>
                 <h2 className='text-xl font-semibold text-center mb-4'>퀴즈의 히라가나 행을 선택하세요</h2>
                 <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3'>
@@ -162,8 +172,8 @@ const StartMenu = () => {
 
                 <div
                     className='text-center text-red-600 hidden cursor-pointer'
-                    id='error'
-                    onClick={() => document.getElementById('error')?.classList.add('hidden')}
+                    ref={errorRef}
+                    onClick={() => errorRef.current?.classList.add('hidden')}
                 ></div>
             </div>
 
@@ -173,7 +183,7 @@ const StartMenu = () => {
                 <p className='text-sm text-gray-600 text-center mb-4'>필요 시에만 선택하세요.</p>
                 <div className='space-y-2'>
                     <div className='flex items-center space-x-2'>
-                        <input type='checkbox' id='timer' className='w-4 h-4' onChange={onTimerChange} />
+                        <input type='checkbox' ref={timerRef} className='w-4 h-4' onChange={onTimerChange} />
                         <label htmlFor='timer' className='text-gray-700'>
                             시간 제한 끔
                         </label>
@@ -181,7 +191,7 @@ const StartMenu = () => {
                     <div className='flex items-center space-x-2'>
                         <input
                             type='text'
-                            id='time'
+                            ref={timeRef}
                             className='border rounded-lg p-2 w-full disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed'
                             placeholder='시간 (초)'
                             defaultValue='3'
@@ -189,19 +199,19 @@ const StartMenu = () => {
                         />
                     </div>
                     <div className='flex items-center space-x-2'>
-                        <input type='checkbox' id='nextnow' className='w-4 h-4' onChange={onNextNowChange} />
+                        <input type='checkbox' ref={nextnowRef} className='w-4 h-4' onChange={onNextNowChange} />
                         <label htmlFor='nextnow' className='text-gray-700'>
                             정답 후 바로 넘어가기 끔
                         </label>
                     </div>
                     <div className='flex items-center space-x-2'>
-                        <input type='checkbox' id='particle' className='w-4 h-4' onChange={onParticleChange} defaultChecked />
+                        <input type='checkbox' ref={particleRef} className='w-4 h-4' onChange={onParticleChange} defaultChecked />
                         <label htmlFor='particle' className='text-gray-700'>
                             파티클 효과 켬
                         </label>
                     </div>
                     <div className='flex items-center space-x-2'>
-                        <input type='checkbox' id='message' className='w-4 h-4' onChange={onMessageChange} defaultChecked />
+                        <input type='checkbox' ref={messageRef} className='w-4 h-4' onChange={onMessageChange} defaultChecked />
                         <label htmlFor='message' className='text-gray-700'>
                             정답/오답 문구 켬
                         </label>

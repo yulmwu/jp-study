@@ -20,3 +20,11 @@
     max-width: 600px;
     margin-top: 1.5rem;
 }
+
+.correct {
+    background-color: #79ffb1;
+}
+
+.incorrect {
+    background-color: #ff978c;
+}
