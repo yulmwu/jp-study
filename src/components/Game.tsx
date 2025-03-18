@@ -1,5 +1,7 @@
 import { useRef, useEffect } from 'react'
 import { useSettings } from './StartMenu'
+import FooterCard from './FooterCard'
+
 import _allHiraganaMap from '../data/hiragana.json'
 import messageMap from '../data/message.json'
 
@@ -285,14 +287,7 @@ const Game = () => {
                 <div id='options' className='flex justify-center flex-wrap gap-5' ref={optionsRef}></div>
             </div>
 
-            <div className='card'>
-                <p className='text-center text-gray-600 text-sm'>
-                    <span className='text-blue-600'>안내:</span> 초기화하려면 페이지를 새로고침하세요.
-                </p>
-                <p className='text-center text-gray-600 text-sm mt-2'>
-                    <span className='text-red-600'>주의:</span> 시간 제한 모드에서 버그가 있습니다. 버그가 발생하면 새로고침하고, 문의하세요.
-                </p>
-            </div>
+            <FooterCard />
 
             <div className='flex justify-center mt-20'>
                 {/* <button className='bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600' onClick={back}>

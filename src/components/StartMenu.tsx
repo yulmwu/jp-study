@@ -1,5 +1,6 @@
 import React, { useRef } from 'react'
 import { create } from 'zustand'
+import FooterCard from './FooterCard'
 
 interface Settings {
     playing: boolean
@@ -81,7 +82,7 @@ const StartMenu = () => {
     const onParticleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.currentTarget.checked) {
             checkboxLabelChange(e, '파티클 효과 켬')
-            
+
         } else {
             checkboxLabelChange(e, '파티클 효과 끔')
         }
@@ -143,11 +144,11 @@ const StartMenu = () => {
 
     const startGame = () => updateSettings(true)
 
-    const status = () => {
-        updateSettings(false)
-        const settings = useSettings.getState()
-        alert(JSON.stringify(settings, null, 2))
-    }
+    // const status = () => {
+    //     updateSettings(false)
+    //     const settings = useSettings.getState()
+    //     alert(JSON.stringify(settings, null, 2))
+    // }
 
     return (
         <div className='container'>
@@ -222,19 +223,7 @@ const StartMenu = () => {
                 </div>
             </div>
 
-            {/* 개발 정보 */}
-            <div className='text-center mt-6 text-gray-600'>
-                <p>
-                    개발 & 버그 제보:{' '}
-                    <a href='https://github.com/yulmwu' className='text-blue-500 hover:underline'>
-                        김준영
-                    </a>
-                </p>
-                <p>데이터 제공: 윤선우</p>
-                <p className='cursor-pointer' onClick={status}>
-                    상태 확인
-                </p>
-            </div>
+            <FooterCard />
         </div>
     )
 }
