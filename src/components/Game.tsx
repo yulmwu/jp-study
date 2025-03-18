@@ -155,7 +155,7 @@ const Game = () => {
 
                 toggleButtons(true)
 
-                scoreUpdate(-5)
+                scoreUpdate(-3)
 
                 document.querySelectorAll('button').forEach((button) => {
                     if (button.innerText.includes(correctAnswer.romaji)) {
@@ -231,7 +231,7 @@ const Game = () => {
 
         if (option === correctAnswer) {
             button.classList.add('correct')
-            scoreUpdate(3)
+            scoreUpdate(1)
             toggleButtons(true)
             stopTimer()
 
@@ -285,14 +285,19 @@ const Game = () => {
             <div className='card'>
                 {/* options */}
                 <div id='options' className='flex justify-center flex-wrap gap-5' ref={optionsRef}></div>
+
+                <div className='flex justify-center gap-5 mt-10'>
+                    <button className='bg-red-300 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-400' onClick={() => alert('공사중입니다.')}>힌트보기 (-2)</button>
+                    <button className='bg-red-300 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-400' onClick={() => alert('공사중입니다.')}>넘어가기 (-3) </button>
+                </div>
             </div>
 
             <FooterCard />
 
             <div className='flex justify-center mt-20'>
-                {/* <button className='bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600' onClick={back}>
+                <button className='bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600' onClick={() => window.location.reload()}>
                     처음으로 돌아가기
-                </button> */}
+                </button>
             </div>
         </div>
     )
