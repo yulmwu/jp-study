@@ -28,3 +28,8 @@
 .incorrect {
     background-color: #ff978c;
 }
+
+/* disabled button */
+button:disabled {
+    cursor: not-allowed;
+}

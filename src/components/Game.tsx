@@ -1,7 +1,9 @@
 import React, { useRef, useEffect } from 'react'
 import { useSettings, defaultSettings } from './StartMenu'
-import hiraganaMapDefault from '../data/hiragana.json'
+import _allHiraganaMap from '../data/hiragana.json'
 import messageMap from '../data/message.json'
+
+const allHiraganaMap = _allHiraganaMap as HiraganaMapInterface
 
 interface HiraganaMapInterface {
     [column: string]: {
@@ -15,34 +17,39 @@ interface Hiragana {
     romaji: string
 }
 
-const hiraganaMap: HiraganaMapInterface = hiraganaMapDefault
-
-// HiraganaMapInterface to Hiragana[]
-const extractHiragana = (obj: HiraganaMapInterface): Hiragana[] => {
-    const hiragana: Hiragana[] = []
-    for (const column in obj) {
-        for (const row in obj[column]) {
-            hiragana.push(obj[column][row])
-        }
-    }
-    return hiragana
-}
-
-const extractedHiragana = extractHiragana(hiraganaMap)
-
-const randomMessage = (messages: string[]): string => {
-    const randomIndex = Math.floor(Math.random() * messages.length)
-    return messages[randomIndex]
-}
-
 const Game = () => {
     let { playing, score, hiraganaRange, timer, time, nextNow, particle, message, duplevel } = useSettings((state) => state)
+
     const scoreRef = useRef<HTMLHeadingElement>(null)
     const questionRef = useRef<HTMLHeadingElement>(null)
     const resultRef = useRef<HTMLParagraphElement>(null)
+    const optionsRef = useRef<HTMLDivElement>(null)
 
     let correctAnswer: Hiragana = { hiragana: '', korean: '', romaji: '' }
     let previousAnswers: Array<Hiragana> = []
+
+    const hiraganaMap: HiraganaMapInterface = {}
+    hiraganaRange.forEach((column) => {
+        hiraganaMap[column] = allHiraganaMap[column]
+    })
+
+    // HiraganaMapInterface to Hiragana[]
+    const extractHiragana = (obj: HiraganaMapInterface): Array<Hiragana> => {
+        const hiragana: Array<Hiragana> = []
+        for (const column in obj) {
+            for (const row in obj[column]) {
+                hiragana.push(obj[column][row])
+            }
+        }
+        return hiragana
+    }
+
+    const extractedHiragana = extractHiragana(hiraganaMap)
+
+    const randomMessage = (messages: Array<string>): string => {
+        const randomIndex = Math.floor(Math.random() * messages.length)
+        return messages[randomIndex]
+    }
 
     const scoreUpdate = (n?: number) => {
         if (!n) score = 0
@@ -51,7 +58,8 @@ const Game = () => {
     }
 
     const toggleButtons = (state: boolean) => {
-        const options = document.getElementById('options')
+        const options = optionsRef.current
+
         if (options) {
             const buttons = options.querySelectorAll('button')
             buttons.forEach((button) => {
@@ -70,16 +78,20 @@ const Game = () => {
         resultRef.current!.innerText = ''
 
         const question = randomHiragana()
+        questionRef.current!.innerText = question.hiragana
 
-        if (previousAnswers.includes(correctAnswer)) {
+        console.log(previousAnswers)
+
+        if (previousAnswers.includes(question)) {
             nextQuestion()
             return
         }
 
-        previousAnswers.push(correctAnswer)
+        previousAnswers.push(question)
+
+        if (previousAnswers.length > duplevel * hiraganaRange.length) previousAnswers.shift()
 
         correctAnswer = question
-        questionRef.current!.innerText = question.hiragana
 
         generateOptions()
     }
@@ -94,7 +106,7 @@ const Game = () => {
 
         options.sort(() => Math.random() - 0.5)
 
-        const optionsElement = document.getElementById('options')
+        const optionsElement = optionsRef.current
         if (optionsElement) {
             optionsElement.innerHTML = ''
             options.forEach((option) => {
@@ -125,20 +137,38 @@ const Game = () => {
 
         if (option === correctAnswer) {
             button.classList.add('correct')
-            resultRef.current!.innerText = `정답! 🎉\n${randomMessage(messageMap.correct)}`
+
+            if (nextNow) {
+                scoreUpdate(1)
+                toggleButtons(true)
+                
+                setTimeout(() => {
+                    nextQuestion()
+                }, 300)
+
+                return
+            }
+
+            if (message) resultRef.current!.innerText = `정답! 🎉\n${randomMessage(messageMap.correct)}`
+
             scoreUpdate(3)
             toggleButtons(true)
+
             setTimeout(() => {
                 nextQuestion()
             }, 1000)
         } else {
             button.classList.add('incorrect')
-            resultRef.current!.innerText = randomMessage(messageMap.incorrect)
+            if (message) resultRef.current!.innerText = randomMessage(messageMap.incorrect)
             scoreUpdate(-1)
         }
     }
 
-    const back = () => useSettings.setState(defaultSettings)
+    const back = () => {
+        if (window.confirm('처음으로 돌아가시겠습니까?')) {
+            useSettings.setState(defaultSettings)
+        }
+    }
 
     useEffect(() => {
         if (playing) {
@@ -148,18 +178,6 @@ const Game = () => {
     })
 
     return (
-        //     <div class="quiz-container">
-        //     <h2 id="score">Score: 0</h2>
-        //     <h1 id="question">?</h1>
-        //     <h4 id="timer">시간 제한: 없음</h4>
-        //     <div class="options" id="options"></div>
-        //     <p id="result"></p>
-        //     <button class="next" id="skipButton">건너뛰기</button>
-        // </div>
-        // <div class="footer2">
-        //     <a href="index.html">처음으로 돌아가기 (클릭)</a>
-        // </div>
-
         <div className='container'>
             <div className='card'>
                 <p id='score' className='text-2xl text-center pb-3' ref={scoreRef}>
@@ -173,7 +191,13 @@ const Game = () => {
 
             <div className='card'>
                 {/* options */}
-                <div id='options' className='flex justify-center flex-wrap gap-5'></div>
+                <div id='options' className='flex justify-center flex-wrap gap-5' ref={optionsRef}></div>
+            </div>
+
+            <div className='flex justify-center mt-20'>
+                <button className='bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600' onClick={back}>
+                    처음으로 돌아가기
+                </button>
             </div>
         </div>
     )

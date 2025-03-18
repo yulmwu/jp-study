@@ -71,8 +71,10 @@ const StartMenu = () => {
     const onNextNowChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.currentTarget.checked) {
             checkboxLabelChange(e, '정답 후 바로 넘어가기 켬')
+            particleRef.current!.disabled = true
         } else {
             checkboxLabelChange(e, '정답 후 바로 넘어가기 끔')
+            particleRef.current!.disabled = false
         }
     }
 
