@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { useSettings, defaultSettings } from './StartMenu'
 import _allHiraganaMap from '../data/hiragana.json'
 import messageMap from '../data/message.json'
@@ -39,15 +39,61 @@ const createFirework = (x: number, y: number) => {
 }
 
 const Game = () => {
-    let { playing, score, hiraganaRange, timer, time, nextNow, particle, message, duplevel } = useSettings((state) => state)
+    let { playing, score, hiraganaRange, timer: is_timer_on, time: timer_secs, nextNow, particle, message, duplevel } = useSettings((state) => state)
 
     const scoreRef = useRef<HTMLHeadingElement>(null)
     const questionRef = useRef<HTMLHeadingElement>(null)
     const resultRef = useRef<HTMLParagraphElement>(null)
     const optionsRef = useRef<HTMLDivElement>(null)
+    const timerRef = useRef<HTMLDivElement>(null)
 
     let correctAnswer: Hiragana = { hiragana: '', korean: '', romaji: '' }
     let previousAnswers: Array<Hiragana> = []
+
+    let timer: NodeJS.Timeout
+    let seconds = 0
+    let timer_running = false
+
+    const updateTimerDisplay = () => {
+        if (is_timer_on) timerRef.current!.innerText = `시간 제한: ${seconds}`
+        else timerRef.current!.innerText = ''
+
+        if (seconds <= 3) updateTimerColor('red')
+        else updateTimerColor('black')
+    }
+
+    const updateTimerColor = (color: string) => {
+        if (is_timer_on) timerRef.current!.style.color = color
+    }
+
+    const startTimer = (timeout: any) => {
+        if (timer_running) return
+
+        timer_running = true
+        timer = setInterval(() => {
+            if (seconds <= 1) {
+                stopTimer()
+                resetTimer()
+                timeout()
+                return
+            }
+
+            seconds--
+            updateTimerDisplay()
+        }, 1000)
+    }
+
+    const stopTimer = () => {
+        clearInterval(timer)
+        timer_running = false
+        updateTimerColor('blue')
+    }
+
+    const resetTimer = () => {
+        stopTimer()
+        seconds = timer_secs
+        updateTimerDisplay()
+    }
 
     const hiraganaMap: HiraganaMapInterface = {}
     hiraganaRange.forEach((column) => {
@@ -95,7 +141,32 @@ const Game = () => {
     }
 
     const nextQuestion = () => {
+        if (!playing) return
+
         toggleButtons(false)
+        resetTimer()
+
+        if (is_timer_on)
+            startTimer(() => {
+                resultRef.current!.innerText = `시간 초과! 정답은 ${correctAnswer.romaji} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
+                updateTimerColor('blue')
+
+                toggleButtons(true)
+
+                scoreUpdate(-5)
+
+                document.querySelectorAll('button').forEach((button) => {
+                    if (button.innerText.includes(correctAnswer.romaji)) {
+                        button.classList.add('correct')
+                    }
+                })
+
+                setTimeout(() => {
+                    nextQuestion()
+                }, 1500)
+                return
+            })
+
         resultRef.current!.innerText = ''
 
         const question = randomHiragana()
@@ -160,6 +231,7 @@ const Game = () => {
             button.classList.add('correct')
             scoreUpdate(3)
             toggleButtons(true)
+            stopTimer()
 
             if (message) resultRef.current!.innerText = `정답! 🎉\n${randomMessage(messageMap.correct)}`
 
@@ -186,12 +258,6 @@ const Game = () => {
         }
     }
 
-    const back = () => {
-        if (window.confirm('처음으로 돌아가시겠습니까?')) {
-            useSettings.setState(defaultSettings)
-        }
-    }
-
     useEffect(() => {
         if (playing) {
             scoreUpdate()
@@ -205,6 +271,9 @@ const Game = () => {
                 <p id='score' className='text-2xl text-center pb-3' ref={scoreRef}>
                     Score: 0
                 </p>
+                <p id='timer' className='text-1.5xl text-center pb-3' ref={timerRef}>
+                    시간 제한: 0
+                </p>
                 <p id='question' className='text-6xl text-center' ref={questionRef}>
                     ?
                 </p>
@@ -216,10 +285,19 @@ const Game = () => {
                 <div id='options' className='flex justify-center flex-wrap gap-5' ref={optionsRef}></div>
             </div>
 
+            <div className='card'>
+                <p className='text-center text-gray-600 text-sm'>
+                    <span className='text-blue-600'>안내:</span> 초기화하려면 페이지를 새로고침하세요.
+                </p>
+                <p className='text-center text-gray-600 text-sm mt-2'>
+                    <span className='text-red-600'>주의:</span> 시간 제한 모드에서 버그가 있습니다. 버그가 발생하면 새로고침하고, 문의하세요.
+                </p>
+            </div>
+
             <div className='flex justify-center mt-20'>
-                <button className='bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600' onClick={back}>
+                {/* <button className='bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600' onClick={back}>
                     처음으로 돌아가기
-                </button>
+                </button> */}
             </div>
         </div>
     )
