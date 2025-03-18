@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/jp-study/static/css/main.de74278d.css",
-    "main.js": "/jp-study/static/js/main.28a1ece6.js",
+    "main.css": "/jp-study/static/css/main.d0557df2.css",
+    "main.js": "/jp-study/static/js/main.a237471b.js",
     "static/js/453.3df1c3cf.chunk.js": "/jp-study/static/js/453.3df1c3cf.chunk.js",
     "index.html": "/jp-study/index.html",
-    "main.de74278d.css.map": "/jp-study/static/css/main.de74278d.css.map",
-    "main.28a1ece6.js.map": "/jp-study/static/js/main.28a1ece6.js.map",
+    "main.d0557df2.css.map": "/jp-study/static/css/main.d0557df2.css.map",
+    "main.a237471b.js.map": "/jp-study/static/js/main.a237471b.js.map",
     "453.3df1c3cf.chunk.js.map": "/jp-study/static/js/453.3df1c3cf.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.de74278d.css",
-    "static/js/main.28a1ece6.js"
+    "static/css/main.d0557df2.css",
+    "static/js/main.a237471b.js"
   ]
 }
