@@ -205,7 +205,7 @@ const Game = () => {
             optionsElement.innerHTML = ''
             options.forEach((option) => {
                 const button = document.createElement('button')
-                button.innerText = `${option.korean} (${option.romaji})`
+                button.innerHTML = `<b>${option.korean}</b><br />${option.romaji}`
                 button.addEventListener('click', () => checkAnswer(option, button))
 
                 // button style with tailwindcss
@@ -213,11 +213,11 @@ const Game = () => {
                     'p-2',
                     'bg-gray-100',
                     'text-black',
-                    'rounded',
+                    'rounded-xl',
                     'hover:bg-gray-200',
                     'focus:outline-none',
-                    'w-20',
-                    'h-20',
+                    'w-17',
+                    'h-17',
                     'cursor-pointer'
                 )
 
@@ -279,7 +279,7 @@ const Game = () => {
                 <p id='question' className='text-6xl text-center' ref={questionRef}>
                     ?
                 </p>
-                <p id='result' className='text-center' ref={resultRef}></p>
+                <p id='result' className='text-center pt-3' ref={resultRef}></p>
             </div>
 
             <div className='card'>
