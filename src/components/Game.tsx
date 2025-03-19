@@ -3,7 +3,8 @@ import { useSettings } from './StartMenu'
 import FooterCard from './FooterCard'
 
 import _allHiraganaMap from '../data/hiragana.json'
-import messageMap from '../data/message.json'
+import MessageMap from '../data/message.json'
+import Settings from '../data/settings.json'
 
 const allHiraganaMap = _allHiraganaMap as HiraganaMapInterface
 
@@ -48,6 +49,8 @@ const Game = () => {
     const resultRef = useRef<HTMLParagraphElement>(null)
     const optionsRef = useRef<HTMLDivElement>(null)
     const timerRef = useRef<HTMLDivElement>(null)
+    const hintRef = useRef<HTMLButtonElement>(null)
+    const skipRef = useRef<HTMLButtonElement>(null)
 
     let correctAnswer: Hiragana = { hiragana: '', korean: '', romaji: '' }
     let previousAnswers: Array<Hiragana> = []
@@ -121,8 +124,9 @@ const Game = () => {
     }
 
     const scoreUpdate = (n?: number) => {
-        if (!n) score = 0
+        if (!n) score = Settings.score_const.default
         else score += n
+
         scoreRef.current!.innerText = `Score: ${score}`
     }
 
@@ -135,6 +139,9 @@ const Game = () => {
                 button.disabled = state
             })
         }
+
+        skipRef.current!.disabled = state
+        hintRef.current!.disabled = state
     }
 
     const randomHiragana = (): Hiragana => {
@@ -155,7 +162,7 @@ const Game = () => {
 
                 toggleButtons(true)
 
-                scoreUpdate(-3)
+                scoreUpdate(Settings.score_const.timeout)
 
                 document.querySelectorAll('button').forEach((button) => {
                     if (button.innerText.includes(correctAnswer.romaji)) {
@@ -218,7 +225,8 @@ const Game = () => {
                     'focus:outline-none',
                     'w-17',
                     'h-17',
-                    'cursor-pointer'
+                    'cursor-pointer',
+                    'options-btn'
                 )
 
                 optionsElement.appendChild(button)
@@ -231,11 +239,11 @@ const Game = () => {
 
         if (option === correctAnswer) {
             button.classList.add('correct')
-            scoreUpdate(1)
+            scoreUpdate(Settings.score_const.correct)
             toggleButtons(true)
             stopTimer()
 
-            if (message) resultRef.current!.innerText = `정답! 🎉\n${randomMessage(messageMap.correct)}`
+            if (message) resultRef.current!.innerText = `정답! 🎉\n${randomMessage(MessageMap.correct)}`
 
             if (nextNow) {
                 setTimeout(() => {
@@ -254,10 +262,28 @@ const Game = () => {
                 nextQuestion()
             }, 1000)
         } else {
-            button.classList.add('incorrect')
-            if (message) resultRef.current!.innerText = randomMessage(messageMap.incorrect)
-            scoreUpdate(-1)
+            button.classList.add('incorrect', 'incorrect-animation')
+            if (message) resultRef.current!.innerText = randomMessage(MessageMap.incorrect)
+            scoreUpdate(Settings.score_const.incorrect)
         }
+    }
+
+    const skip = () => {
+        resultRef.current!.innerHTML = `정답은 <b class='text-blue-500'>${correctAnswer.romaji}</b> 이였습니다.<br />곧 다음 문제로 넘어갑니다.`
+        toggleButtons(true)
+        stopTimer()
+
+        scoreUpdate(Settings.score_const.skip)
+
+        document.querySelectorAll('button').forEach((button) => {
+            if (button.innerText.includes(correctAnswer.romaji)) {
+                button.classList.add('correct')
+            }
+        })
+
+        setTimeout(() => {
+            nextQuestion()
+        }, 1500)
     }
 
     useEffect(() => {
@@ -287,8 +313,16 @@ const Game = () => {
                 <div id='options' className='flex justify-center flex-wrap gap-5' ref={optionsRef}></div>
 
                 <div className='flex justify-center gap-5 mt-10'>
-                    <button className='bg-red-300 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-400' onClick={() => alert('공사중입니다.')}>힌트보기 (-2)</button>
-                    <button className='bg-red-300 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-400' onClick={() => alert('공사중입니다.')}>넘어가기 (-3) </button>
+                    <button
+                        className='bg-red-400 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-500'
+                        onClick={() => alert('공사중입니다.')}
+                        ref={hintRef}
+                    >
+                        힌트보기 (???점)
+                    </button>
+                    <button className='bg-red-400 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-500' onClick={skip} ref={skipRef}>
+                        스킵하기 ({Settings.score_const.skip}점)
+                    </button>
                 </div>
             </div>
 

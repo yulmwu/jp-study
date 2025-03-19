@@ -34,7 +34,7 @@ const StartMenu = () => {
     const nextnowRef = useRef<HTMLInputElement>(null)
     const particleRef = useRef<HTMLInputElement>(null)
     const messageRef = useRef<HTMLInputElement>(null)
-    const errorRef = useRef<HTMLDivElement>(null)   
+    const errorRef = useRef<HTMLDivElement>(null)
 
     const selectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
         const update = (checked: boolean) => {
@@ -82,7 +82,6 @@ const StartMenu = () => {
     const onParticleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.currentTarget.checked) {
             checkboxLabelChange(e, '파티클 효과 켬')
-
         } else {
             checkboxLabelChange(e, '파티클 효과 끔')
         }
