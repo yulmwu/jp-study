@@ -3,10 +3,9 @@ import { useSettings } from './StartMenu'
 import FooterCard from './FooterCard'
 
 import _allHiraganaMap from '../data/hiragana.json'
+import _hiraganaStrokeImageMap from '../data/hiragana_stroke.json'
 import MessageMap from '../data/message.json'
 import Settings from '../data/settings.json'
-
-const allHiraganaMap = _allHiraganaMap as HiraganaMapInterface
 
 interface HiraganaMapInterface {
     [column: string]: {
@@ -18,7 +17,15 @@ interface Hiragana {
     hiragana: string
     korean: string
     romaji: string
+    hint?: string
 }
+
+interface HiraganaStrokeImageMapInterface {
+    [hiragana: string]: string
+}
+
+const allHiraganaMap = _allHiraganaMap as HiraganaMapInterface
+const HiraganaStrokeImageMap = _hiraganaStrokeImageMap as HiraganaStrokeImageMapInterface
 
 const createFirework = (x: number, y: number) => {
     for (let i = 0; i < 30; i++) {
@@ -42,11 +49,24 @@ const createFirework = (x: number, y: number) => {
 }
 
 const Game = () => {
-    let { playing, score, hiraganaRange, timer: is_timer_on, time: timer_secs, nextNow, particle, message, duplevel } = useSettings((state) => state)
+    let {
+        playing,
+        score,
+        hiraganaRange,
+        timer: is_timer_on,
+        time: timer_secs,
+        nextNow,
+        particle,
+        message,
+        strokeImage,
+        duplevel,
+    } = useSettings((state) => state)
 
     const scoreRef = useRef<HTMLHeadingElement>(null)
     const questionRef = useRef<HTMLHeadingElement>(null)
+    const questionImageRef = useRef<HTMLImageElement>(null)
     const resultRef = useRef<HTMLParagraphElement>(null)
+    const hintMessageRef = useRef<HTMLParagraphElement>(null)
     const optionsRef = useRef<HTMLDivElement>(null)
     const timerRef = useRef<HTMLDivElement>(null)
     const hintRef = useRef<HTMLButtonElement>(null)
@@ -155,6 +175,9 @@ const Game = () => {
         toggleButtons(false)
         resetTimer()
 
+        resultRef.current!.innerText = ''
+        hintMessageRef.current!.innerText = ''
+
         if (is_timer_on)
             startTimer(() => {
                 resultRef.current!.innerText = `시간 초과! 정답은 ${correctAnswer.romaji} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
@@ -176,10 +199,7 @@ const Game = () => {
                 return
             })
 
-        resultRef.current!.innerText = ''
-
         const question = randomHiragana()
-        questionRef.current!.innerText = question.hiragana
 
         console.log(previousAnswers)
 
@@ -191,6 +211,14 @@ const Game = () => {
         previousAnswers.push(question)
 
         if (previousAnswers.length > duplevel * hiraganaRange.length) previousAnswers.shift()
+
+        questionRef.current!.innerText = question.hiragana
+        if (strokeImage) {
+            console.log(HiraganaStrokeImageMap[question.hiragana])
+            questionImageRef.current!.src = HiraganaStrokeImageMap[question.hiragana]
+        }
+
+        if (!question.hint) hintRef.current!.disabled = true
 
         correctAnswer = question
 
@@ -286,6 +314,12 @@ const Game = () => {
         }, 1500)
     }
 
+    const hint = () => {
+        hintRef.current!.disabled = true
+        if (correctAnswer.hint) hintMessageRef.current!.innerHTML = `<b class='text-blue-500'>힌트:</b> ${correctAnswer.hint}`
+        scoreUpdate(Settings.score_const.hint)
+    }
+
     useEffect(() => {
         if (playing) {
             scoreUpdate()
@@ -302,10 +336,16 @@ const Game = () => {
                 <p id='timer' className='text-1.5xl text-center pb-3' ref={timerRef}>
                     시간 제한: 0
                 </p>
-                <p id='question' className='text-6xl text-center' ref={questionRef}>
-                    ?
-                </p>
+                <div>
+                    <p id='question' className='text-6xl text-center' ref={questionRef}>
+                        ?
+                    </p>
+                    {/* <img id='questionImage' className='w-15 mx-auto mt-5'
+                    ref={questionImageRef} alt='question' /> */}
+                    {strokeImage ? <img id='questionImage' className='w-15 mx-auto mt-5' ref={questionImageRef} alt='question' /> : null}
+                </div>
                 <p id='result' className='text-center pt-3' ref={resultRef}></p>
+                <p id='hintmessage' className='text-center pt-3' ref={hintMessageRef}></p>
             </div>
 
             <div className='card'>
@@ -313,12 +353,8 @@ const Game = () => {
                 <div id='options' className='flex justify-center flex-wrap gap-5' ref={optionsRef}></div>
 
                 <div className='flex justify-center gap-5 mt-10'>
-                    <button
-                        className='bg-red-400 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-500'
-                        onClick={() => alert('공사중입니다.')}
-                        ref={hintRef}
-                    >
-                        힌트보기 (???점)
+                    <button className='bg-red-400 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-500' onClick={hint} ref={hintRef}>
+                        힌트보기 ({Settings.score_const.hint}점)
                     </button>
                     <button className='bg-red-400 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-500' onClick={skip} ref={skipRef}>
                         스킵하기 ({Settings.score_const.skip}점)

@@ -4,6 +4,7 @@
         "correct": 5,
         "incorrect": -3,
         "timeout": -10,
-        "skip": -10
+        "skip": -10,
+        "hint": -5
     }
 }

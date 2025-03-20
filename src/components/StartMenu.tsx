@@ -11,6 +11,7 @@ interface Settings {
     nextNow: boolean
     particle: boolean
     message: boolean
+    strokeImage: boolean
     duplevel: number
 }
 
@@ -23,6 +24,7 @@ const defaultSettings: Settings = {
     nextNow: false,
     particle: true,
     message: true,
+    strokeImage: false,
     duplevel: 4,
 }
 
@@ -34,6 +36,7 @@ const StartMenu = () => {
     const nextnowRef = useRef<HTMLInputElement>(null)
     const particleRef = useRef<HTMLInputElement>(null)
     const messageRef = useRef<HTMLInputElement>(null)
+    const strokeImageRef = useRef<HTMLInputElement>(null)
     const errorRef = useRef<HTMLDivElement>(null)
 
     const selectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -95,6 +98,14 @@ const StartMenu = () => {
         }
     }
 
+    const onStrokeImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.currentTarget.checked) {
+            checkboxLabelChange(e, '획순 이미지 표시 함')
+        } else {
+            checkboxLabelChange(e, '획순 이미지 표시 안함')
+        }
+    }
+
     const error = (message: string) => {
         const error = errorRef.current as HTMLDivElement
         error.textContent = message
@@ -129,6 +140,7 @@ const StartMenu = () => {
         const nextNow = (nextnowRef.current as HTMLInputElement).checked
         const particle = (particleRef.current as HTMLInputElement).checked
         const message = (messageRef.current as HTMLInputElement).checked
+        const strokeImage = (strokeImageRef.current as HTMLInputElement).checked
 
         useSettings.setState({
             playing: start,
@@ -138,6 +150,7 @@ const StartMenu = () => {
             nextNow,
             particle,
             message,
+            strokeImage,
         })
     }
 
@@ -217,6 +230,12 @@ const StartMenu = () => {
                         <input type='checkbox' ref={messageRef} className='w-4 h-4' onChange={onMessageChange} defaultChecked />
                         <label htmlFor='message' className='text-gray-700'>
                             정답/오답 문구 켬
+                        </label>
+                    </div>
+                    <div className='flex items-center space-x-2'>
+                        <input type='checkbox' ref={strokeImageRef} className='w-4 h-4' onChange={onStrokeImageChange} />
+                        <label htmlFor='strokeImage' className='text-gray-700'>
+                            획순 이미지 표시 안함
                         </label>
                     </div>
                 </div>
