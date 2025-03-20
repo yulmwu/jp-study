@@ -12,6 +12,7 @@ interface Settings {
     particle: boolean
     message: boolean
     strokeImage: boolean
+    font: 'sans-serif' | 'serif'
     duplevel: number
 }
 
@@ -25,6 +26,7 @@ const defaultSettings: Settings = {
     particle: true,
     message: true,
     strokeImage: false,
+    font: 'sans-serif',
     duplevel: 4,
 }
 
@@ -37,6 +39,7 @@ const StartMenu = () => {
     const particleRef = useRef<HTMLInputElement>(null)
     const messageRef = useRef<HTMLInputElement>(null)
     const strokeImageRef = useRef<HTMLInputElement>(null)
+    const fontPreviewRef = useRef<HTMLParagraphElement>(null)
     const errorRef = useRef<HTMLDivElement>(null)
 
     const selectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -104,6 +107,13 @@ const StartMenu = () => {
         } else {
             checkboxLabelChange(e, '획순 이미지 표시 안함')
         }
+    }
+
+    const onFontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const font = e.currentTarget.value as 'sans-serif' | 'serif'
+        useSettings.setState({ font })
+        fontPreviewRef.current!.classList.remove('font-sans-serif', 'font-serif')
+        fontPreviewRef.current!.classList.add(`font-${font}`)
     }
 
     const error = (message: string) => {
@@ -237,6 +247,21 @@ const StartMenu = () => {
                         <label htmlFor='strokeImage' className='text-gray-700'>
                             획순 이미지 표시 안함
                         </label>
+                    </div>
+                    {/* font select input */}
+                    <div className='flex items-center space-x-2 pt-5'>
+                        <label htmlFor='font' className='text-gray-700'>
+                            폰트 선택
+                        </label>
+                        <select id='font' className='border rounded-lg p-2' onChange={onFontChange}>
+                            <option value='sans-serif'>Sans Serif - 기본 폰트, 고딕체</option>
+                            <option value='serif'>Serif - 명조체</option>
+                        </select>
+                    </div>
+                    <div className='flex items-center space-x-2 pt-5'>
+                        <p className='text-xl font-sans-serif' ref={fontPreviewRef}>
+                            あ か さ た な は ま や ら わ
+                        </p>
                     </div>
                 </div>
             </div>

@@ -59,6 +59,7 @@ const Game = () => {
         particle,
         message,
         strokeImage,
+        font,
         duplevel,
     } = useSettings((state) => state)
 
@@ -337,7 +338,7 @@ const Game = () => {
                     시간 제한: 0
                 </p>
                 <div>
-                    <p id='question' className='text-6xl text-center' ref={questionRef}>
+                    <p id='question' className={`text-6xl text-center font-${font}`} ref={questionRef}>
                         ?
                     </p>
                     {/* <img id='questionImage' className='w-15 mx-auto mt-5'
