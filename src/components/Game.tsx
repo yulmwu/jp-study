@@ -7,6 +7,8 @@ import _hiraganaStrokeImageMap from '../data/hiragana_stroke.json'
 import MessageMap from '../data/message.json'
 import Settings from '../data/settings.json'
 
+import createFirework from '../utils/firework'
+
 interface HiraganaMapInterface {
     [column: string]: {
         [row: string]: Hiragana
@@ -27,34 +29,13 @@ interface HiraganaStrokeImageMapInterface {
 const allHiraganaMap = _allHiraganaMap as HiraganaMapInterface
 const HiraganaStrokeImageMap = _hiraganaStrokeImageMap as HiraganaStrokeImageMapInterface
 
-const createFirework = (x: number, y: number) => {
-    for (let i = 0; i < 30; i++) {
-        const particle = document.createElement('div')
-        particle.classList.add('particle')
-        document.body.appendChild(particle)
-
-        const angle = Math.random() * 2 * Math.PI
-        const distance = Math.random() * 100 + 50
-        const xOffset = Math.cos(angle) * distance + 'px'
-        const yOffset = Math.sin(angle) * distance + 'px'
-
-        particle.style.setProperty('--x', xOffset)
-        particle.style.setProperty('--y', yOffset)
-        particle.style.left = x + 'px'
-        particle.style.top = y + 'px'
-        particle.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`
-
-        setTimeout(() => particle.remove(), 1300)
-    }
-}
-
 const Game = () => {
     let {
         playing,
         score,
         hiraganaRange,
-        timer: is_timer_on,
-        time: timer_secs,
+        timer: timerSecs,
+        timeRemaining: timeRemainingSecs,
         nextNow,
         particle,
         message,
@@ -70,6 +51,7 @@ const Game = () => {
     const hintMessageRef = useRef<HTMLParagraphElement>(null)
     const optionsRef = useRef<HTMLDivElement>(null)
     const timerRef = useRef<HTMLDivElement>(null)
+    const timeRemainingRef = useRef<HTMLDivElement>(null)
     const hintRef = useRef<HTMLButtonElement>(null)
     const skipRef = useRef<HTMLButtonElement>(null)
 
@@ -77,48 +59,95 @@ const Game = () => {
     let previousAnswers: Array<Hiragana> = []
 
     let timer: NodeJS.Timeout
-    let seconds = 0
-    let timer_running = false
+    let timerCurrent = 0
+    let timerRunning = false
 
+    let timeRemainingTimer: NodeJS.Timeout
+    let timeRemainingCurrent = 0
+    let timeRemainingRunning = false
+
+    // --- Timer ---
     const updateTimerDisplay = () => {
-        if (is_timer_on) timerRef.current!.innerText = `시간 제한: ${seconds}`
+        if (timerSecs) timerRef.current!.innerText = `시간 제한: ${timerCurrent}`
         else timerRef.current!.innerText = ''
 
-        if (seconds <= 3) updateTimerColor('red')
+        if (timerCurrent <= 3) updateTimerColor('red')
         else updateTimerColor('black')
     }
 
     const updateTimerColor = (color: string) => {
-        if (is_timer_on) timerRef.current!.style.color = color
+        if (timerSecs) timerRef.current!.style.color = color
     }
 
     const startTimer = (timeout: any) => {
-        if (timer_running) return
+        if (timerRunning) return
 
-        timer_running = true
+        timerRunning = true
         timer = setInterval(() => {
-            if (seconds <= 1) {
+            if (timerCurrent <= 1) {
                 stopTimer()
                 resetTimer()
                 timeout()
                 return
             }
 
-            seconds--
+            timerCurrent--
             updateTimerDisplay()
         }, 1000)
     }
 
     const stopTimer = () => {
         clearInterval(timer)
-        timer_running = false
+        timerRunning = false
         updateTimerColor('blue')
     }
 
     const resetTimer = () => {
         stopTimer()
-        seconds = timer_secs
+        timerCurrent = timerSecs ?? 0
         updateTimerDisplay()
+    }
+
+    // --- Time Remaining ---
+    const updateTimeRemainingDisplay = () => {
+        if (timeRemainingSecs) timeRemainingRef.current!.innerText = `남은 시간: ${timeRemainingCurrent}`
+        else timeRemainingRef.current!.innerText = ''
+
+        if (timeRemainingCurrent <= 3) updateTimeRemainingColor('red')
+        else updateTimeRemainingColor('black')
+    }
+
+    const updateTimeRemainingColor = (color: string) => {
+        if (timeRemainingSecs) timeRemainingRef.current!.style.color = color
+    }
+
+    const startTimeRemaining = (timeout: any) => {
+        if (timeRemainingRunning) return
+
+        timeRemainingRunning = true
+        timeRemainingTimer = setInterval(() => {
+            if (timeRemainingCurrent <= 1) {
+                stopTimeRemaining()
+                resetTimeRemaining()
+                timeout()
+                return
+            }
+
+            timeRemainingCurrent--
+            updateTimeRemainingDisplay()
+        }, 1000)
+    }
+
+    const stopTimeRemaining = () => {
+        clearInterval(timeRemainingTimer)
+        timeRemainingRunning = false
+        updateTimeRemainingColor('blue')
+    }
+
+    const resetTimeRemaining = () => {
+        stopTimeRemaining()
+        timeRemainingCurrent = timeRemainingSecs ?? 0
+        updateTimeRemainingDisplay()
     }
 
     const hiraganaMap: HiraganaMapInterface = {}
@@ -179,7 +208,7 @@ const Game = () => {
         resultRef.current!.innerText = ''
         hintMessageRef.current!.innerText = ''
 
-        if (is_timer_on)
+        if (timerSecs)
             startTimer(() => {
                 resultRef.current!.innerText = `시간 초과! 정답은 ${correctAnswer.romaji} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
                 updateTimerColor('blue')
@@ -202,8 +231,6 @@ const Game = () => {
 
         const question = randomHiragana()
 
-        console.log(previousAnswers)
-
         if (previousAnswers.includes(question)) {
             nextQuestion()
             return
@@ -214,10 +241,7 @@ const Game = () => {
         if (previousAnswers.length > duplevel * hiraganaRange.length) previousAnswers.shift()
 
         questionRef.current!.innerText = question.hiragana
-        if (strokeImage) {
-            console.log(HiraganaStrokeImageMap[question.hiragana])
-            questionImageRef.current!.src = HiraganaStrokeImageMap[question.hiragana]
-        }
+        if (strokeImage) questionImageRef.current!.src = HiraganaStrokeImageMap[question.hiragana]
 
         if (!question.hint) hintRef.current!.disabled = true
 
@@ -325,7 +349,48 @@ const Game = () => {
         if (playing) {
             scoreUpdate()
             nextQuestion()
+
+            if (timeRemainingSecs) {
+                resetTimeRemaining()
+                startTimeRemaining(() => {
+                    stopTimer()
+                    stopTimeRemaining()
+                    toggleButtons(true)
+                    alert(`시간 초과!\n\n점수: ${score}\n설정 시간:${timeRemainingSecs}초`)
+                    window.location.reload()
+                })
+            }
         }
+
+        // document.addEventListener('keydown', (e) => {
+        //     const key = e.key.toLowerCase()
+
+        //     switch (key) {
+        //         case Settings.keybinds.skip:
+        //             skip()
+        //             break
+        //         case Settings.keybinds.hint:
+        //             hint()
+        //             break
+        //         case Settings.keybinds.option1:
+        //             checkAnswer(correctAnswer, document.querySelectorAll('button')[0] as HTMLButtonElement)
+        //             break
+        //         case Settings.keybinds.option2:
+        //             checkAnswer(correctAnswer, document.querySelectorAll('button')[1] as HTMLButtonElement)
+        //             break
+        //         case Settings.keybinds.option3:
+        //             checkAnswer(correctAnswer, document.querySelectorAll('button')[2] as HTMLButtonElement)
+        //             break
+        //         case Settings.keybinds.option4:
+        //             checkAnswer(correctAnswer, document.querySelectorAll('button')[3] as HTMLButtonElement)
+        //             break
+        //         case Settings.keybinds.option5:
+        //             checkAnswer(correctAnswer, document.querySelectorAll('button')[4] as HTMLButtonElement)
+        //             break
+        //         default:
+        //             break
+        //     }
+        // })
     })
 
     return (
@@ -336,6 +401,9 @@ const Game = () => {
                 </p>
                 <p id='timer' className='text-1.5xl text-center pb-3' ref={timerRef}>
                     시간 제한: 0
+                </p>
+                <p id='timerRemaining' className='text-1.5xl text-center pb-3' ref={timeRemainingRef}>
+                    남은 시간: 0
                 </p>
                 <div>
                     <p id='question' className={`text-6xl text-center font-${font}`} ref={questionRef}>
