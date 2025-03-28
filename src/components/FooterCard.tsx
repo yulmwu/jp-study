@@ -16,6 +16,11 @@ const FooterCard = () => {
                 <span className='p-3'>|</span>
                 데이터 제공: <span className='text-blue-600'>윤선우</span>
             </p>
+
+            <p className='text-center text-gray-600 text-sm mt-2'>
+                본 페이지는 MIT 라이센스를 따릅니다.
+                <span className='text-blue-600'> <b><a href="https://github.com/yulmwu/jp-study">[소스코드]</a></b></span>
+            </p>
         </div>
     )
 }
