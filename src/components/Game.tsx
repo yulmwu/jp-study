@@ -227,9 +227,7 @@ const Game = () => {
                 scoreUpdate(Settings.score_const.timeout)
 
                 document.querySelectorAll('button').forEach((button) => {
-                    if (button.innerText.includes(correctAnswer.romaji)) {
-                        button.classList.add('correct')
-                    }
+                    if (button.innerText.split('\n')[1] === correctAnswer.romaji) button.classList.add('correct')
                 })
 
                 setTimeout(() => {
@@ -378,7 +376,7 @@ const Game = () => {
 정답률: ${calcCorrectRate()}%
 
 설정 시간: ${timeRemainingSecs}초
-범위: ${hiraganaRange.join(', ')}
+범위: ${hiraganaRange.length === 10 ? '전체' : hiraganaRange.join(', ')}
 
 "확인" 버튼 클릭 시 처음 화면으로 돌아갑니다.`)
 
@@ -424,9 +422,6 @@ const Game = () => {
                 <p id='score' className='text-2xl text-center pb-3' ref={scoreRef}>
                     점수: 0 {showCorrectRate ? '(정답률: 0%)' : ''}
                 </p>
-                <p id='timer' className='text-1.5xl text-center pb-3' ref={timerRef}>
-                    시간 제한: 0
-                </p>
                 <p id='timerRemaining' className='text-1.5xl text-center pb-3' ref={timeRemainingRef}>
                     남은 시간: 0
                 </p>
@@ -443,6 +438,9 @@ const Game = () => {
             </div>
 
             <div className='card'>
+                <p id='timer' className='text-1.5xl text-center pb-3' ref={timerRef}>
+                    시간 제한: 0
+                </p>
                 {/* options */}
                 <div id='options' className='flex justify-center flex-wrap gap-5' ref={optionsRef}></div>
 

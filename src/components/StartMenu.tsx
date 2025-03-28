@@ -252,6 +252,7 @@ const StartMenu = () => {
                             className='border rounded-lg p-2 w-full disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed'
                             placeholder='시간 (초)'
                             defaultValue='3'
+                            onChange={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ''))}
                             disabled
                         />
                     </div>
@@ -268,6 +269,7 @@ const StartMenu = () => {
                             className='border rounded-lg p-2 w-full disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed'
                             placeholder='시간 (초)'
                             defaultValue='60'
+                            onChange={(e) => (e.currentTarget.value = e.currentTarget.value.replace(/\D/g, ''))}
                             disabled
                         />
                     </div>
