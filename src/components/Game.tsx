@@ -42,6 +42,9 @@ const Game = () => {
         strokeImage,
         font,
         duplevel,
+        correctCount,
+        incorrectCount,
+        showCorrectRate,
     } = useSettings((state) => state)
 
     const scoreRef = useRef<HTMLHeadingElement>(null)
@@ -173,11 +176,16 @@ const Game = () => {
         return messages[randomIndex]
     }
 
+    const calcCorrectRate = (): number => {
+        if (correctCount + incorrectCount === 0) return 0
+        return Math.round((correctCount / (correctCount + incorrectCount)) * 100)
+    }
+
     const scoreUpdate = (n?: number) => {
         if (!n) score = Settings.score_const.default
         else score += n
 
-        scoreRef.current!.innerText = `Score: ${score}`
+        scoreRef.current!.innerText = `점수: ${score} ${showCorrectRate ? `(정답률: ${calcCorrectRate()}%)` : ''}`
     }
 
     const toggleButtons = (state: boolean) => {
@@ -210,6 +218,7 @@ const Game = () => {
 
         if (timerSecs)
             startTimer(() => {
+                incorrectCount++
                 resultRef.current!.innerText = `시간 초과! 정답은 ${correctAnswer.romaji} 이였습니다.\n곧 다음 문제로 넘어갑니다.`
                 updateTimerColor('blue')
 
@@ -297,6 +306,7 @@ const Game = () => {
             stopTimer()
 
             if (message) resultRef.current!.innerText = `정답! 🎉\n${randomMessage(MessageMap.correct)}`
+            correctCount++
 
             if (nextNow) {
                 setTimeout(() => {
@@ -318,10 +328,12 @@ const Game = () => {
             button.classList.add('incorrect', 'incorrect-animation')
             if (message) resultRef.current!.innerText = randomMessage(MessageMap.incorrect)
             scoreUpdate(Settings.score_const.incorrect)
+            incorrectCount++
         }
     }
 
     const skip = () => {
+        incorrectCount++
         resultRef.current!.innerHTML = `정답은 <b class='text-blue-500'>${correctAnswer.romaji}</b> 이였습니다.<br />곧 다음 문제로 넘어갑니다.`
         toggleButtons(true)
         stopTimer()
@@ -356,7 +368,20 @@ const Game = () => {
                     stopTimer()
                     stopTimeRemaining()
                     toggleButtons(true)
-                    alert(`시간 초과!\n\n점수: ${score}\n설정 시간:${timeRemainingSecs}초`)
+
+                    alert(`시간 초과!
+
+점수: ${score}
+
+정답 수: ${correctCount}
+오답 수: ${incorrectCount}
+정답률: ${calcCorrectRate()}%
+
+설정 시간: ${timeRemainingSecs}초
+범위: ${hiraganaRange.join(', ')}
+
+"확인" 버튼 클릭 시 처음 화면으로 돌아갑니다.`)
+
                     window.location.reload()
                 })
             }
@@ -397,7 +422,7 @@ const Game = () => {
         <div className='container'>
             <div className='card'>
                 <p id='score' className='text-2xl text-center pb-3' ref={scoreRef}>
-                    Score: 0
+                    점수: 0 {showCorrectRate ? '(정답률: 0%)' : ''}
                 </p>
                 <p id='timer' className='text-1.5xl text-center pb-3' ref={timerRef}>
                     시간 제한: 0

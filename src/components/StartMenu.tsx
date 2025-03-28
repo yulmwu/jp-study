@@ -14,6 +14,9 @@ interface Settings {
     strokeImage: boolean
     font: 'sans-serif' | 'serif'
     duplevel: number
+    correctCount: number
+    incorrectCount: number
+    showCorrectRate: boolean
 }
 
 const defaultSettings: Settings = {
@@ -26,6 +29,9 @@ const defaultSettings: Settings = {
     strokeImage: false,
     font: 'sans-serif',
     duplevel: 4,
+    correctCount: 0,
+    incorrectCount: 0,
+    showCorrectRate: false,
 }
 
 const useSettings = create<Settings>((set) => defaultSettings)
@@ -37,6 +43,7 @@ const StartMenu = () => {
     const particleRef = useRef<HTMLInputElement>(null)
     const messageRef = useRef<HTMLInputElement>(null)
     const strokeImageRef = useRef<HTMLInputElement>(null)
+    const showCorrectRateRef = useRef<HTMLInputElement>(null)
     const fontPreviewRef = useRef<HTMLParagraphElement>(null)
     const timeRemainingCheckRef = useRef<HTMLInputElement>(null)
     const timeRemainingSecsRef = useRef<HTMLInputElement>(null)
@@ -120,6 +127,14 @@ const StartMenu = () => {
         }
     }
 
+    const showCorrectRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.currentTarget.checked) {
+            checkboxLabelChange(e, '정답률 표시 함')
+        } else {
+            checkboxLabelChange(e, '정답률 표시 안함')
+        }
+    }
+
     const onFontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const font = e.currentTarget.value as 'sans-serif' | 'serif'
         useSettings.setState({ font })
@@ -165,6 +180,7 @@ const StartMenu = () => {
         const particle = (particleRef.current as HTMLInputElement).checked
         const message = (messageRef.current as HTMLInputElement).checked
         const strokeImage = (strokeImageRef.current as HTMLInputElement).checked
+        const showCorrectRate = (showCorrectRateRef.current as HTMLInputElement).checked
 
         useSettings.setState({
             playing: start,
@@ -175,6 +191,7 @@ const StartMenu = () => {
             message,
             strokeImage,
             timeRemaining,
+            showCorrectRate,
         })
     }
 
@@ -276,6 +293,12 @@ const StartMenu = () => {
                         <input type='checkbox' ref={strokeImageRef} className='w-4 h-4' onChange={onStrokeImageChange} />
                         <label htmlFor='strokeImage' className='text-gray-700'>
                             획순 이미지 표시 안함
+                        </label>
+                    </div>
+                    <div className='flex items-center space-x-2'>
+                        <input type='checkbox' ref={showCorrectRateRef} className='w-4 h-4' onChange={showCorrectRateChange} defaultChecked />
+                        <label htmlFor='strokeImage' className='text-gray-700'>
+                            정답률 표시 함
                         </label>
                     </div>
                     {/* font select input */}
