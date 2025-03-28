@@ -6,8 +6,8 @@ interface Settings {
     playing: boolean
     score: number
     hiraganaRange: Array<string>
-    timer: boolean
-    time: number
+    timer?: number | undefined
+    timeRemaining?: number | undefined
     nextNow: boolean
     particle: boolean
     message: boolean
@@ -20,8 +20,6 @@ const defaultSettings: Settings = {
     playing: false,
     score: 0,
     hiraganaRange: [],
-    timer: false,
-    time: 3,
     nextNow: false,
     particle: true,
     message: true,
@@ -40,6 +38,8 @@ const StartMenu = () => {
     const messageRef = useRef<HTMLInputElement>(null)
     const strokeImageRef = useRef<HTMLInputElement>(null)
     const fontPreviewRef = useRef<HTMLParagraphElement>(null)
+    const timeRemainingCheckRef = useRef<HTMLInputElement>(null)
+    const timeRemainingSecsRef = useRef<HTMLInputElement>(null)
     const errorRef = useRef<HTMLDivElement>(null)
 
     const selectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -68,10 +68,21 @@ const StartMenu = () => {
         const timeInput = timeRef.current as HTMLInputElement
         if (e.currentTarget.checked) {
             timeInput.disabled = false
-            checkboxLabelChange(e, '시간 제한 켬')
+            checkboxLabelChange(e, '한 문제 당 시간 제한 켬')
         } else {
             timeInput.disabled = true
-            checkboxLabelChange(e, '시간 제한 끔')
+            checkboxLabelChange(e, '한 문제 당 시간 제한 끔')
+        }
+    }
+
+    const onTimeRemainingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const timeRemainingSecsInput = timeRemainingSecsRef.current as HTMLInputElement
+        if (e.currentTarget.checked) {
+            timeRemainingSecsInput.disabled = false
+            checkboxLabelChange(e, '전체 시간 제한 켬')
+        } else {
+            timeRemainingSecsInput.disabled = true
+            checkboxLabelChange(e, '전체 시간 제한 끔')
         }
     }
 
@@ -144,8 +155,11 @@ const StartMenu = () => {
             return
         }
 
-        const timer = (timerRef.current as HTMLInputElement).checked
-        const time = parseInt((timeRef.current as HTMLInputElement).value)
+        const timer = (timerRef.current as HTMLInputElement).checked ? parseInt((timeRef.current as HTMLInputElement).value) : undefined
+
+        const timeRemaining = (timeRemainingCheckRef.current as HTMLInputElement).checked
+            ? parseInt((timeRemainingSecsRef.current as HTMLInputElement).value)
+            : undefined
 
         const nextNow = (nextnowRef.current as HTMLInputElement).checked
         const particle = (particleRef.current as HTMLInputElement).checked
@@ -155,12 +169,12 @@ const StartMenu = () => {
         useSettings.setState({
             playing: start,
             hiraganaRange: selectedHiragana,
-            timer: timer,
-            time,
+            timer,
             nextNow,
             particle,
             message,
             strokeImage,
+            timeRemaining,
         })
     }
 
@@ -211,7 +225,7 @@ const StartMenu = () => {
                     <div className='flex items-center space-x-2'>
                         <input type='checkbox' ref={timerRef} className='w-4 h-4' onChange={onTimerChange} />
                         <label htmlFor='timer' className='text-gray-700'>
-                            시간 제한 끔
+                            한 문제 당 시간 제한 끔
                         </label>
                     </div>
                     <div className='flex items-center space-x-2'>
@@ -221,6 +235,22 @@ const StartMenu = () => {
                             className='border rounded-lg p-2 w-full disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed'
                             placeholder='시간 (초)'
                             defaultValue='3'
+                            disabled
+                        />
+                    </div>
+                    <div className='flex items-center space-x-2'>
+                        <input type='checkbox' ref={timeRemainingCheckRef} className='w-4 h-4' onChange={onTimeRemainingChange} />
+                        <label htmlFor='timer' className='text-gray-700'>
+                            전체 시간 제한 끔
+                        </label>
+                    </div>
+                    <div className='flex items-center space-x-2'>
+                        <input
+                            type='text'
+                            ref={timeRemainingSecsRef}
+                            className='border rounded-lg p-2 w-full disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed'
+                            placeholder='시간 (초)'
+                            defaultValue='60'
                             disabled
                         />
                     </div>
@@ -237,9 +267,9 @@ const StartMenu = () => {
                         </label>
                     </div>
                     <div className='flex items-center space-x-2'>
-                        <input type='checkbox' ref={messageRef} className='w-4 h-4' onChange={onMessageChange} defaultChecked />
+                        <input type='checkbox' ref={messageRef} className='w-4 h-4' onChange={onMessageChange} />
                         <label htmlFor='message' className='text-gray-700'>
-                            정답/오답 문구 켬
+                            정답/오답 문구 끔
                         </label>
                     </div>
                     <div className='flex items-center space-x-2'>
